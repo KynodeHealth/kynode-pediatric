@@ -179,4 +179,3 @@ Este Local Node pre-piloto todavía no incluye:
 - umbrales calibrados en campo.
 
 Esos puntos quedan como trabajo de productización financiado por el grant.
-
