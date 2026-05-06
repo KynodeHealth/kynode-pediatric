@@ -1,0 +1,120 @@
+<!doctype html>
+<!-- Copyright 2026 KYNODE. Licensed under the Apache License, Version 2.0. -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>KYNODE Pediatric Demo</title>
+    <link rel="stylesheet" href="static/kynode-pediatric.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow" data-i18n="eyebrow">Pre-pilot open-source alpha</p>
+          <h1>KYNODE Pediatric</h1>
+          <p class="subtitle" data-i18n="subtitle">Offline pediatric climate-health surveillance from the point of care</p>
+        </div>
+        <div class="hero-actions" aria-label="Language">
+          <button class="lang active" data-lang="en">EN</button>
+          <button class="lang" data-lang="es">ES</button>
+        </div>
+      </header>
+
+      <section class="signal-strip">
+        <div>
+          <span class="status-dot"></span>
+          <span data-i18n="offline">Offline-ready local node</span>
+        </div>
+        <div data-i18n="notDiagnosis">Statistical support only. No autonomous diagnosis.</div>
+      </section>
+
+      <section class="grid top-grid">
+        <article class="panel child-panel">
+          <div class="panel-title">
+            <span data-i18n="childCase">Child case</span>
+            <small>Synthetic demo</small>
+          </div>
+          <div class="child-summary">
+            <div class="avatar">KP</div>
+            <div>
+              <h2 id="child-id">LOCAL-CHILD-024</h2>
+              <p id="child-context"></p>
+            </div>
+          </div>
+          <dl class="facts">
+            <div><dt data-i18n="age">Age</dt><dd id="child-age"></dd></div>
+            <div><dt data-i18n="sex">Sex</dt><dd id="child-sex"></dd></div>
+            <div><dt data-i18n="zone">Zone</dt><dd id="child-zone"></dd></div>
+          </dl>
+        </article>
+
+        <article class="panel">
+          <div class="panel-title">
+            <span data-i18n="privacyBoundary">Privacy boundary</span>
+            <small data-i18n="privacySmall">Node-level protection</small>
+          </div>
+          <p class="privacy-copy" id="privacy-copy"></p>
+          <div class="flow">
+            <span data-i18n="clinic">Clinic</span>
+            <span>→</span>
+            <span data-i18n="node">Local node</span>
+            <span>→</span>
+            <span data-i18n="signal">Aggregated signal</span>
+          </div>
+        </article>
+      </section>
+
+      <section class="grid">
+        <article class="panel">
+          <div class="panel-title"><span data-i18n="triage">Pediatric triage</span><small data-i18n="ageAdjusted">Age-adjusted ranges</small></div>
+          <div id="triage-list" class="metric-list"></div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-title"><span data-i18n="growth">WHO growth</span><small data-i18n="auditable">Auditable LMS formula</small></div>
+          <div class="big-number"><span id="growth-z"></span><small>Z</small></div>
+          <div class="submetric"><span data-i18n="percentile">Percentile</span>: <strong id="growth-percentile"></strong></div>
+          <div class="chip" id="growth-interpretation"></div>
+          <details>
+            <summary data-i18n="whyFlag">Why this flag?</summary>
+            <p id="growth-formula"></p>
+          </details>
+        </article>
+
+        <article class="panel">
+          <div class="panel-title"><span data-i18n="vaccines">Vaccination status</span><small data-i18n="referenceSchedule">Reference schedule</small></div>
+          <div class="vaccine-columns">
+            <div><h3 data-i18n="completed">Completed</h3><ul id="vaccines-completed"></ul></div>
+            <div><h3 data-i18n="overdue">Overdue</h3><ul id="vaccines-overdue"></ul></div>
+            <div><h3 data-i18n="upcoming">Upcoming</h3><ul id="vaccines-upcoming"></ul></div>
+          </div>
+          <p class="source" id="vaccine-source"></p>
+        </article>
+
+        <article class="panel signal-panel">
+          <div class="panel-title"><span data-i18n="zoneSignal">Zone-level climate-health signal</span><small data-i18n="noIdentifiers">No patient identifiers</small></div>
+          <div class="signal-score">
+            <div><span data-i18n="indicator">Indicator</span><strong data-i18n="dengue">Dengue suspicion</strong></div>
+            <div><span>Z-score</span><strong id="signal-z"></strong></div>
+            <div><span data-i18n="severity">Severity</span><strong id="signal-severity"></strong></div>
+          </div>
+          <div class="baseline">
+            <span data-i18n="baseline">Baseline</span>
+            <code id="signal-history"></code>
+            <span data-i18n="currentWeek">Current week</span>
+            <strong id="signal-current"></strong>
+          </div>
+          <pre id="export-record"></pre>
+        </article>
+      </section>
+
+      <footer>
+        <span data-i18n="footer">Statistical support only. No autonomous diagnosis.</span>
+      </footer>
+    </main>
+
+    <script src="static/i18n.js"></script>
+    <script src="static/demo.js"></script>
+  </body>
+</html>

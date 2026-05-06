@@ -1,0 +1,213 @@
+{
+  "meta": {
+    "generated_at": "2026-05-15",
+    "demo_type": "synthetic",
+    "language_default": "en"
+  },
+  "child": {
+    "display_id": "LOCAL-CHILD-024",
+    "age_months": 24,
+    "age_years": 2,
+    "sex": "female",
+    "zone": "San Cristobal Norte",
+    "context": "Recent heavy rains; clinic working offline."
+  },
+  "triage": {
+    "band_label": "toddler_1_3_years",
+    "flags": {
+      "heart_rate": "abnormal_high",
+      "respiratory_rate": "abnormal_high",
+      "temperature_c": "critical_high",
+      "spo2": "abnormal_low"
+    },
+    "ranges": {
+      "heart_rate": [
+        80,
+        130
+      ],
+      "respiratory_rate": [
+        22,
+        40
+      ],
+      "temperature_c": [
+        36.1,
+        37.5
+      ],
+      "spo2": [
+        95,
+        100
+      ]
+    },
+    "clinical_note": "Age-banded vital sign flag only. This output is not a diagnosis, triage order or treatment recommendation.",
+    "values": {
+      "heart_rate": 142,
+      "respiratory_rate": 44,
+      "temperature_c": 39.8,
+      "spo2": 94
+    }
+  },
+  "growth": {
+    "z_score": -2.07,
+    "percentile": 1.9,
+    "interpretation": "low",
+    "indicator": "weight_for_age",
+    "formula_used": "indicator=weight_for_age; sex=female; age_months=24; L=-0.3138; M=11.3614; S=0.10545; Z = ((9.20/11.3614)^-0.3138 - 1) / (-0.3138 * 0.10545) = -2.07",
+    "source": "WHO Child Growth Standards (2006) and WHO Reference 2007; compact offline LMS table bundled for pre-pilot alpha. Missing age points are linearly interpolated.",
+    "clinical_note": "Growth status flag only. This output is not a diagnosis and does not replace clinical judgment."
+  },
+  "vaccinations": {
+    "completed": [
+      {
+        "vaccine": "BCG",
+        "label": "BCG",
+        "target_date": "2024-05-15",
+        "date": "2024-05-16"
+      },
+      {
+        "vaccine": "hepB_birth",
+        "label": "Hepatitis B birth dose",
+        "target_date": "2024-05-15",
+        "date": "2024-05-16"
+      },
+      {
+        "vaccine": "pentavalent_1",
+        "label": "Pentavalent dose 1",
+        "target_date": "2024-07-15",
+        "date": "2024-07-21"
+      },
+      {
+        "vaccine": "polio_1",
+        "label": "Polio dose 1",
+        "target_date": "2024-07-15",
+        "date": "2024-07-21"
+      },
+      {
+        "vaccine": "rotavirus_1",
+        "label": "Rotavirus dose 1",
+        "target_date": "2024-07-15",
+        "date": "2024-07-21"
+      },
+      {
+        "vaccine": "pcv_1",
+        "label": "Pneumococcal conjugate dose 1",
+        "target_date": "2024-07-15",
+        "date": "2024-07-21"
+      },
+      {
+        "vaccine": "pentavalent_2",
+        "label": "Pentavalent dose 2",
+        "target_date": "2024-09-15",
+        "date": "2024-10-02"
+      }
+    ],
+    "due": [],
+    "overdue": [
+      {
+        "vaccine": "polio_2",
+        "label": "Polio dose 2",
+        "target_date": "2024-09-15"
+      },
+      {
+        "vaccine": "rotavirus_2",
+        "label": "Rotavirus dose 2",
+        "target_date": "2024-09-15"
+      },
+      {
+        "vaccine": "pcv_2",
+        "label": "Pneumococcal conjugate dose 2",
+        "target_date": "2024-09-15"
+      },
+      {
+        "vaccine": "pentavalent_3",
+        "label": "Pentavalent dose 3",
+        "target_date": "2024-11-15"
+      },
+      {
+        "vaccine": "polio_3",
+        "label": "Polio dose 3",
+        "target_date": "2024-11-15"
+      },
+      {
+        "vaccine": "rotavirus_3",
+        "label": "Rotavirus dose 3",
+        "target_date": "2024-11-15"
+      },
+      {
+        "vaccine": "pcv_3",
+        "label": "Pneumococcal conjugate dose 3",
+        "target_date": "2024-11-15"
+      },
+      {
+        "vaccine": "mmr_1",
+        "label": "MMR dose 1",
+        "target_date": "2025-05-15"
+      },
+      {
+        "vaccine": "yellow_fever_1",
+        "label": "Yellow fever dose 1",
+        "target_date": "2025-05-15"
+      },
+      {
+        "vaccine": "pcv_booster",
+        "label": "Pneumococcal conjugate booster",
+        "target_date": "2025-08-15"
+      },
+      {
+        "vaccine": "pentavalent_booster",
+        "label": "Pentavalent booster",
+        "target_date": "2025-11-15"
+      }
+    ],
+    "upcoming": [
+      {
+        "vaccine": "mmr_2",
+        "label": "MMR dose 2",
+        "target_date": "2029-05-15"
+      }
+    ],
+    "unmatched_received": [],
+    "source": {
+      "country": "VE",
+      "schedule_name": "Venezuela pediatric reference schedule",
+      "source_name": "Sociedad Venezolana de Puericultura y Pediatria - Esquema de inmunizaciones para ninos y adolescentes en Venezuela: Recomendaciones 2025",
+      "source_url": "https://www.svpediatria.org/img/secciones/esquema-de-inmunizacion/documento/ESQUEMA_DE_INMUNIZACIONES_2025.pdf",
+      "source_date": "2025",
+      "validation_status": "reference_schedule_pending_moh_validation",
+      "notes": "Pre-pilot alpha subset focused on common early childhood doses. Formal deployments must validate against MPPS/PAI site policy."
+    },
+    "clinical_note": "Vaccination schedule status only. This output is not an instruction to administer a vaccine and does not replace local clinical policy."
+  },
+  "signal": {
+    "baseline_mean": 10.5,
+    "baseline_std": 1.71,
+    "z_score": 21.37,
+    "flag": "anomaly_high_severity",
+    "severity": "high",
+    "reason": "Current count exceeds the rolling baseline threshold.",
+    "clinical_note": "Aggregate statistical signal only. This output is not a diagnosis, outbreak declaration or automated action trigger.",
+    "zone": "San Cristobal Norte",
+    "week": "2026-W20",
+    "indicator": "dengue_suspicion",
+    "historical_counts": [
+      10,
+      12,
+      8,
+      11,
+      9,
+      13
+    ],
+    "current_count": 47,
+    "exportable_record": {
+      "zone": "San Cristobal Norte",
+      "week": "2026-W20",
+      "indicator": "dengue_suspicion",
+      "count": 47,
+      "z_score": 21.37,
+      "contains_phi": false
+    }
+  },
+  "privacy": {
+    "phi_boundary": "PHI stays inside the clinic. Only aggregated zone-level signal leaves the node.",
+    "contains_real_patient_data": false
+  }
+}
