@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - pregrant-alpha
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  python-packages:
+    name: Python packages
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install package test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pytest pytest-cov
+          python -m pip install \
+            -e packages/growth-curves \
+            -e packages/triage-ranges \
+            -e packages/anomaly-detection \
+            -e packages/vaccinations
+
+      - name: Run tests with coverage gate
+        run: |
+          python -m pytest \
+            --cov=kynode_pediatric_growth_curves \
+            --cov=kynode_pediatric_triage_ranges \
+            --cov=kynode_pediatric_anomaly_detection \
+            --cov=kynode_pediatric_vaccinations \
+            --cov-report=term-missing \
+            --cov-report=json:coverage.json \
+            --cov-fail-under=80 \
+            -q
+
+      - name: Check coverage badge is current
+        run: python scripts/update_coverage_badge.py coverage.json badges/coverage.json --check
+
+      - name: Generate demo payload
+        run: python demo/generate_demo_data.py
+
+      - name: Validate demo JSON
+        run: python -m json.tool demo/data/demo-output.json >/dev/null

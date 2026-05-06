@@ -1,21 +1,25 @@
 # KYNODE Pediatric
 
+[![CI](https://github.com/KynodeHealth/kynode-pediatric/actions/workflows/ci.yml/badge.svg)](https://github.com/KynodeHealth/kynode-pediatric/actions/workflows/ci.yml)
+[![Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/KynodeHealth/kynode-pediatric/main/badges/coverage.json)](https://github.com/KynodeHealth/kynode-pediatric/actions/workflows/ci.yml)
+[![Demo](https://img.shields.io/badge/demo-GitHub%20Pages-0f766e)](https://kynodehealth.github.io/kynode-pediatric/)
+
 [English](README.md) · [Español](README.es.md)
 
 Open-source pediatric climate-health surveillance, built from the point of care.
 
-This is not another clinic app. KYNODE Pediatric runs on a small computer inside the clinic, no internet required, and turns the workflows that nurses and community health workers already do every day — triage, growth measurement, vaccination, recognition of danger signs — into a real-time signal for climate-sensitive child health: dengue after heavy rains, diarrheal disease after flooding, heat-related illness during heat waves, respiratory outbreaks when air quality drops.
+We are building this from the reality of clinics in Venezuela where intermittent connectivity is normal, not exceptional. KYNODE Pediatric runs on a small computer inside the clinic, works without internet, and turns the workflows nurses and community health workers already do every day - triage, growth measurement, vaccination, recognition of danger signs - into an early signal for climate-sensitive child health: dengue after heavy rains, diarrheal disease after flooding, heat-related illness during heat waves, respiratory outbreaks when air quality drops.
 
 The module sits on top of [KYNODE](https://kynode.io), a proprietary edge health information system that already runs in rural and semi-urban Venezuela. We are releasing the pediatric layer under Apache 2.0 because the population it serves — children under five in disconnected, climate-vulnerable settings — has a stronger case for free access than for revenue capture.
 
 ## How it works
 
-Five components, none of which are diagnoses. The module organizes what the clinician already knows how to do, and uses the resulting structured data to feed a surveillance signal upstream.
+The repo is intentionally small. Four packages work today in alpha form; the IMCI rule package is still grant-funded work. These components organize pediatric signals for clinician review and aggregate surveillance. They do not make clinical decisions.
 
 1. **Pediatric triage.** Vital sign ranges by age. A 2-year-old gets thresholds for a 2-year-old, not the same thresholds we use for an adult. Captures structured data at the front desk — input layer for everything else.
 2. **WHO growth curves.** Weight, height and BMI percentiles for 0-60 months, calculated locally from a bundled WHO LMS reference table. The alpha ships with compact offline tables and interpolation, so it works with no internet. Feeds growth-status and nutrition surveillance; formal acute malnutrition assessment requires weight-for-height/length or MUAC and is not claimed in this alpha.
 3. **Vaccination schedule.** Configurable per country. The alpha ships with a Venezuela reference schedule based on SVPP 2025, pending ministerial validation before field deployment. Feeds coverage and equity-gap surveillance per zone.
-4. **IMCI danger sign alerts.** Deterministic rules from the WHO Integrated Management of Childhood Illness protocol. The module flags. The clinician decides. There is no auto-diagnosis here, and there will not be one. First-line outbreak signal at the patient level.
+4. **IMCI danger sign alerts.** Deterministic rules from the WHO Integrated Management of Childhood Illness protocol. This package is planned after the grant decision and will stay rule-based.
 5. **Anomaly detection.** Weekly comparison of aggregated, anonymized indicators per zone against rolling baseline. Flags climate-sensitive disease clusters — dengue, malaria, diarrheal disease, heat-related illness, respiratory outbreaks — before they reach reportable thresholds in the slow monthly system. Statistical, not ML. Fully auditable.
 
 Identifiers are stripped at the node before anything reaches the cloud. Patient PHI never leaves the clinic. Only the surveillance signal travels.
@@ -28,7 +32,7 @@ The packages in this repo are not greenfield work. They extract pediatric clinic
 - **Age-banded pediatric vital sign reference ranges** — in production in the KYNODE consultation flow since March 2026.
 - **Epidemiological trends radar with weekly aggregation** — in production in our cloud dashboard since March 2026.
 
-What is happening in this repo through May 2026: extracting those three components into standalone, Apache 2.0 packages (`growth-curves`, `triage-ranges`, `anomaly-detection`), writing one new package (`vaccinations`) on top of a public Venezuela immunization reference, and shipping a small demo web that consumes the four packages end-to-end. A fifth package (`imci-rules`) is specified and ships after the grant decision.
+This alpha turns those pieces into standalone Apache 2.0 packages (`growth-curves`, `triage-ranges`, `anomaly-detection`), adds a new `vaccinations` package based on a public Venezuela immunization reference, and ships a small bilingual demo that consumes the four packages end-to-end. A fifth package (`imci-rules`) is specified and ships after the grant decision.
 
 We chose to open-source the pediatric layer specifically because the population it serves has the strongest case for free access. The rest of the KYNODE platform (cloud, sync, AI inference pipeline, hardware integration) remains proprietary.
 
@@ -45,6 +49,22 @@ In practice, KYNODE Pediatric and these tools can coexist. The aggregated weekly
 Pre-pilot alpha. As of May 2026, this repo contains four installable offline-ready pediatric packages (`growth-curves`, `triage-ranges`, `anomaly-detection` and `vaccinations`), a bilingual demo that consumes their generated JSON output, and documentation for the architecture and roadmap.
 
 This is a working open-source prototype for review, grant evaluation and technical collaboration. It is not validated clinical field software, not the full WHO IMCI scope and not an end-to-end deployment bundle.
+
+## Demo
+
+The demo is a synthetic pediatric case running through the four alpha packages.
+
+Live demo: [kynodehealth.github.io/kynode-pediatric](https://kynodehealth.github.io/kynode-pediatric/)
+
+![KYNODE Pediatric demo screenshot](docs/assets/demo-screenshot.png)
+
+## Known limits
+
+- The demo uses synthetic data only.
+- The growth package uses compact WHO LMS tables for 0-60 months, with interpolation between bundled points.
+- The Venezuela vaccination schedule is based on SVPP 2025 and still needs MPPS/PAI validation before field use.
+- The anomaly thresholds are transparent starting values, not field-calibrated thresholds.
+- The IMCI danger-sign package is not included in this alpha.
 
 ## License
 
@@ -79,6 +99,9 @@ Useful entry points:
 - [Architecture](docs/architecture.md) — how the module fits together and where it sits inside KYNODE.
 - [Roadmap](ROADMAP.md) — what's built, what's being built, what's planned.
 - [Demo README](demo/README.md) — how to regenerate and serve the bilingual demo.
+- [Pregrant alpha notes](docs/releases/v0.1.0-pregrant-alpha.md) — what changed, how it was verified, and what remains out of scope.
+- [Changelog](CHANGELOG.md) — release history and pending alpha notes.
+- [Security policy](SECURITY.md) — how to report security or privacy concerns.
 
 ## Why open source
 

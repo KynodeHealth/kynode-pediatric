@@ -1,21 +1,25 @@
 # KYNODE Pediátrico
 
+[![CI](https://github.com/KynodeHealth/kynode-pediatric/actions/workflows/ci.yml/badge.svg)](https://github.com/KynodeHealth/kynode-pediatric/actions/workflows/ci.yml)
+[![Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/KynodeHealth/kynode-pediatric/main/badges/coverage.json)](https://github.com/KynodeHealth/kynode-pediatric/actions/workflows/ci.yml)
+[![Demo](https://img.shields.io/badge/demo-GitHub%20Pages-0f766e)](https://kynodehealth.github.io/kynode-pediatric/)
+
 [English](README.md) · [Español](README.es.md)
 
 Vigilancia pediátrica climate-health de código abierto, construida desde el punto de atención.
 
-Esto no es otra app clínica. KYNODE Pediátrico corre en una computadora pequeña dentro de la clínica, sin internet, y convierte los flujos de trabajo que enfermeras y promotoras de salud ya hacen todos los días — triaje, medición de crecimiento, vacunación, reconocimiento de signos de alarma — en una señal en tiempo real para la salud infantil sensible al clima: dengue después de lluvias fuertes, diarrea después de inundaciones, golpe de calor durante olas de calor, brotes respiratorios cuando la calidad del aire baja.
+Lo estamos construyendo desde la realidad de clínicas en Venezuela donde la conectividad intermitente es normal, no una excepción. KYNODE Pediátrico corre en una computadora pequeña dentro de la clínica, sin internet, y convierte los flujos que enfermeras y promotoras de salud ya hacen todos los días - triaje, medición de crecimiento, vacunación, reconocimiento de signos de alarma - en una señal temprana para salud infantil sensible al clima: dengue después de lluvias fuertes, diarrea después de inundaciones, golpe de calor durante olas de calor, brotes respiratorios cuando la calidad del aire baja.
 
 Este módulo se construye sobre [KYNODE](https://kynode.io), nuestro sistema de información clínica propietario que ya corre en clínicas rurales y semiurbanas de Venezuela. Liberamos la capa pediátrica bajo Apache 2.0 porque la población a la que sirve — niños menores de cinco años en entornos desconectados y vulnerables al clima — tiene un caso más fuerte para acceso libre que para captura de ingresos.
 
 ## Cómo funciona
 
-Cinco componentes. Ninguno es diagnóstico. El módulo organiza lo que el clínico ya sabe hacer y usa los datos estructurados resultantes para alimentar una señal de vigilancia hacia arriba.
+El repo es intencionalmente pequeño. Cuatro paquetes funcionan hoy en alpha; el paquete de reglas IMCI sigue siendo trabajo financiable por el grant. Estos componentes organizan señales pediátricas para revisión clínica y vigilancia agregada. No toman decisiones clínicas.
 
 1. **Triaje pediátrico.** Rangos de signos vitales por edad. Un niño de 2 años no se mide contra los umbrales de un adulto. Captura datos estructurados en la entrada — capa de input para todo lo demás.
 2. **Curvas de crecimiento OMS.** Peso, talla, IMC y percentiles para 0-60 meses calculados localmente desde una tabla LMS OMS empaquetada. El alpha usa tablas compactas offline con interpolación. Alimenta vigilancia de estado de crecimiento y nutrición; la evaluación formal de desnutrición aguda requiere peso-para-talla/longitud o MUAC y no se afirma en este alpha.
 3. **Esquema de vacunación.** Configurable por país. El alpha trae una referencia para Venezuela basada en SVPP 2025, pendiente de validación ministerial antes de despliegue en campo. Alimenta vigilancia de cobertura y brechas de equidad por zona.
-4. **Alertas IMCI.** Reglas deterministas del protocolo de la OMS — deshidratación, dificultad respiratoria, patrones de fiebre. El módulo señala. El clínico decide. No hay autodiagnóstico, ni lo va a haber. Primera línea de señal de brote a nivel paciente.
+4. **Alertas IMCI.** Reglas deterministas del protocolo de la OMS — deshidratación, dificultad respiratoria, patrones de fiebre. Este paquete se implementa después de la decisión del grant y se mantendrá basado en reglas.
 5. **Detección de anomalías.** Comparación semanal de indicadores agregados y anonimizados por zona contra una línea base móvil. Marca clusters de enfermedades sensibles al clima — dengue, malaria, diarrea, golpe de calor, brotes respiratorios — antes de que alcancen los umbrales de los reportes mensuales lentos. Estadística simple, no ML. Auditable.
 
 Los identificadores se eliminan en el nodo antes de que algo salga hacia la nube. Los datos clínicos del paciente nunca salen de la clínica. Solo viaja la señal de vigilancia.
@@ -28,7 +32,7 @@ Los paquetes de este repo no son trabajo desde cero. Extraen lógica clínica pe
 - **Rangos de signos vitales pediátricos por edad** — en producción en el flujo de consulta de KYNODE desde marzo de 2026.
 - **Radar de tendencias epidemiológicas con agregación semanal** — en producción en nuestro dashboard de la nube desde marzo de 2026.
 
-Lo que está pasando en este repo durante mayo de 2026: extraer esos tres componentes como paquetes standalone bajo Apache 2.0 (`growth-curves`, `triage-ranges`, `anomaly-detection`), escribir un paquete nuevo (`vaccinations`) sobre una referencia pública de inmunización para Venezuela, y publicar un demo web pequeño que consume los cuatro paquetes de extremo a extremo. Un quinto paquete (`imci-rules`) está especificado y se publica después de la decisión del grant.
+Este alpha convierte esas piezas en paquetes standalone bajo Apache 2.0 (`growth-curves`, `triage-ranges`, `anomaly-detection`), suma un paquete nuevo (`vaccinations`) sobre una referencia pública de inmunización para Venezuela, y publica un demo bilingüe pequeño que consume los cuatro paquetes de extremo a extremo. Un quinto paquete (`imci-rules`) está especificado y se publica después de la decisión del grant.
 
 Decidimos abrir la capa pediátrica específicamente porque la población a la que sirve tiene el caso más fuerte para acceso libre. El resto del platform KYNODE (nube, sync, pipeline de inferencia, integración de hardware) sigue siendo propietario.
 
@@ -37,6 +41,22 @@ Decidimos abrir la capa pediátrica específicamente porque la población a la q
 Alpha pre-piloto. A mayo de 2026 este repositorio contiene cuatro paquetes pediátricos instalables y offline-ready (`growth-curves`, `triage-ranges`, `anomaly-detection` y `vaccinations`), un demo bilingüe que consume JSON generado por esos paquetes, y documentación de arquitectura y roadmap.
 
 Es un prototipo open-source funcional para revisión, evaluación de grant y colaboración técnica. No es software clínico validado en campo, no cubre todo el alcance OMS IMCI y no es un bundle de despliegue de extremo a extremo.
+
+## Demo
+
+El demo usa un caso pediátrico sintético y corre por los cuatro paquetes alpha.
+
+Demo público: [kynodehealth.github.io/kynode-pediatric](https://kynodehealth.github.io/kynode-pediatric/)
+
+![Screenshot del demo KYNODE Pediatric](docs/assets/demo-screenshot.png)
+
+## Limitaciones conocidas
+
+- El demo usa únicamente datos sintéticos.
+- El paquete de crecimiento usa tablas OMS LMS compactas para 0-60 meses, con interpolación entre puntos empaquetados.
+- El esquema de vacunación de Venezuela se basa en SVPP 2025 y todavía requiere validación MPPS/PAI antes de uso en campo.
+- Los umbrales de anomalías son valores iniciales transparentes, no umbrales calibrados con datos de campo.
+- El paquete de signos de alarma IMCI no está incluido en este alpha.
 
 ## Inicio rápido
 
@@ -59,6 +79,14 @@ python -m http.server 8080 -d demo
 ```
 
 Luego abre `http://localhost:8080`.
+
+Entradas útiles:
+
+- [Architecture](docs/architecture.md) — cómo encaja el módulo dentro de KYNODE.
+- [Roadmap](ROADMAP.md) — qué existe, qué falta y qué financiaría el grant.
+- [Notas del alpha pre-grant](docs/releases/v0.1.0-pregrant-alpha.md) — cambios, verificación y límites conocidos.
+- [Changelog](CHANGELOG.md) — historial de releases y notas del alpha pendiente.
+- [Security policy](SECURITY.md) — cómo reportar temas de seguridad o privacidad.
 
 ## Por qué open source
 
