@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kynode-pediatric-growth-curves"
+version = "0.1.0a0"
+description = "Offline WHO LMS z-score helpers for KYNODE Pediatric."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [{ name = "KYNODE" }]
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+kynode_pediatric_growth_curves = ["data/*.json"]
