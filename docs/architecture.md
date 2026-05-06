@@ -15,10 +15,10 @@ Each of the five components lives in its own package. This is on purpose: a pedi
 ```
 packages/
   growth-curves/         WHO z-score tables + percentile calculator (Python)
-  vaccinations/          Configurable national schedule + reminder logic (Python)
-  triage/                Pediatric vital sign ranges by age (Python + TS UI)
-  imci-rules/            WHO IMCI deterministic alert rules (Python)
+  triage-ranges/         Pediatric vital sign reference ranges by age band (Python)
   anomaly-detection/     Weekly aggregation + z-score on rolling baseline per zone (Python)
+  vaccinations/          Configurable national schedule + reminder logic (Python)
+  imci-rules/            WHO IMCI deterministic alert rules (Python)
 ```
 
 The Python packages have no shared internal dependency between them. You can pull `growth-curves` into a completely different system and it will work without any other piece of this repo.

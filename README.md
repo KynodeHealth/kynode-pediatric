@@ -28,7 +28,7 @@ The packages in this repo are not greenfield work. They extract pediatric clinic
 - **Age-banded pediatric vital sign reference ranges** — in production in the KYNODE consultation flow since March 2026.
 - **Epidemiological trends radar with weekly aggregation** — in production in our cloud dashboard since March 2026.
 
-What is happening in this repo through May 2026: extracting those three components into standalone, Apache 2.0 packages (`growth-curves`, `triage`, `anomaly-detection`), and writing two new ones (`vaccinations`, `imci-rules`) to close the surveillance loop.
+What is happening in this repo through May 2026: extracting those three components into standalone, Apache 2.0 packages (`growth-curves`, `triage-ranges`, `anomaly-detection`), writing one new package (`vaccinations`) on top of the Venezuelan PAI calendar, and shipping a small demo web that consumes the four packages end-to-end. A fifth package (`imci-rules`) is fully specified and ships after the grant decision.
 
 We chose to open-source the pediatric layer specifically because the population it serves has the strongest case for free access. The rest of the KYNODE platform (cloud, sync, AI inference pipeline, hardware integration) remains proprietary.
 
@@ -42,7 +42,7 @@ In practice, KYNODE Pediatric and these tools can coexist. The aggregated weekly
 
 ## Status
 
-Early development. As of May 2026, this repo contains the spec for all five components, plus the first three (`growth-curves`, `vaccinations` and `anomaly-detection`) in active development with working code and tests. The other two are in design.
+Early development. As of May 2026, this repo contains the spec for all five components, plus the first four (`growth-curves`, `triage-ranges`, `anomaly-detection` and `vaccinations`) in active development with working code and tests. The fifth (`imci-rules`) is in design.
 
 If you found this looking for production-ready software, come back in a few months.
 

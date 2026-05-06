@@ -28,13 +28,13 @@ Los paquetes de este repo no son trabajo desde cero. Extraen lógica clínica pe
 - **Rangos de signos vitales pediátricos por edad** — en producción en el flujo de consulta de KYNODE desde marzo de 2026.
 - **Radar de tendencias epidemiológicas con agregación semanal** — en producción en nuestro dashboard de la nube desde marzo de 2026.
 
-Lo que está pasando en este repo durante mayo de 2026: extraer esos tres componentes como paquetes standalone bajo Apache 2.0 (`growth-curves`, `triage`, `anomaly-detection`), y escribir dos nuevos (`vaccinations`, `imci-rules`) para cerrar el bucle de vigilancia.
+Lo que está pasando en este repo durante mayo de 2026: extraer esos tres componentes como paquetes standalone bajo Apache 2.0 (`growth-curves`, `triage-ranges`, `anomaly-detection`), escribir un paquete nuevo (`vaccinations`) sobre el calendario PAI venezolano, y publicar un demo web pequeño que consume los cuatro paquetes de extremo a extremo. Un quinto paquete (`imci-rules`) está completamente especificado y se publica después de la decisión del grant.
 
 Decidimos abrir la capa pediátrica específicamente porque la población a la que sirve tiene el caso más fuerte para acceso libre. El resto del platform KYNODE (nube, sync, pipeline de inferencia, integración de hardware) sigue siendo propietario.
 
 ## En qué etapa está
 
-Desarrollo temprano. A mayo de 2026 este repositorio contiene el spec de los cinco componentes y los tres primeros (`growth-curves`, `vaccinations` y `anomaly-detection`) en construcción activa. Si llegaste buscando algo listo para producción, vuelve en unos meses.
+Desarrollo temprano. A mayo de 2026 este repositorio contiene el spec de los cinco componentes y los cuatro primeros (`growth-curves`, `triage-ranges`, `anomaly-detection` y `vaccinations`) en construcción activa. El quinto (`imci-rules`) está en diseño. Si llegaste buscando algo listo para producción, vuelve en unos meses.
 
 ## Por qué open source
 
