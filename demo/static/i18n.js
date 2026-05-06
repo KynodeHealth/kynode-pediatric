@@ -38,7 +38,7 @@ const KYNODE_I18N = {
     footer: "Statistical support only. No autonomous diagnosis.",
     privacyStatement: "PHI stays inside the clinic. Only aggregated zone-level signal leaves the node.",
     none: "None",
-    loadError: "Run python demo/generate_demo_data.py first.",
+    loadError: "Run python3 demo/generate_demo_data.py first.",
     female: "Girl",
     months: "months",
     flags: {
@@ -97,7 +97,7 @@ const KYNODE_I18N = {
     footer: "Apoyo estadístico únicamente. Sin diagnóstico autónomo.",
     privacyStatement: "Los datos identificables permanecen en la clínica. Solo sale la señal agregada por zona.",
     none: "Ninguna",
-    loadError: "Ejecuta python demo/generate_demo_data.py primero.",
+    loadError: "Ejecuta python3 demo/generate_demo_data.py primero.",
     female: "Niña",
     months: "meses",
     flags: {

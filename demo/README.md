@@ -3,8 +3,8 @@
 Generate the synthetic demo payload from the standalone packages:
 
 ```bash
-python demo/generate_demo_data.py
-python -m http.server 8080 -d demo
+python3 demo/generate_demo_data.py
+python3 -m http.server 8080 -d demo
 ```
 
 Open `http://localhost:8080`.
