@@ -2,7 +2,7 @@
 
 ## What this does
 
-Reads the stream of pediatric consultations happening at the clinic, aggregates them into weekly counts per zone and per indicator, and flags when a count diverges from its rolling baseline beyond a configurable threshold.
+Compares already aggregated weekly counts per zone and indicator against a rolling baseline, then flags when the current count diverges beyond a configurable threshold.
 
 In plain language: when dengue cases climb in one zone the week after heavy rains, this is the package that notices and raises a flag — without waiting for the slow monthly reporting cycle that often arrives after the outbreak has already moved.
 
@@ -20,7 +20,7 @@ This package consumes outputs from the other packages in the module:
 - **Dengue suspicion**: count from triage records flagged with dengue-pattern fever (from `imci-rules`).
 - **Diarrheal disease / dehydration**: count from triage records flagged with dehydration danger signs.
 - **Heat-related illness**: count from triage records flagged with hyperthermia + climate metadata.
-- **Acute malnutrition**: count of children flagged below -2 z-score for weight-for-height (from `growth-curves`).
+- **Growth-status concern**: count of children flagged below a configured growth threshold. Formal acute malnutrition assessment requires weight-for-height/length or MUAC and is not part of this alpha.
 - **Vaccination coverage gaps**: count of children identified as behind schedule per vaccine (from `vaccinations`).
 
 Each indicator is tracked per zone and per week. Zones can be administrative (parish, municipality, district) and are configured per deployment.
@@ -45,41 +45,41 @@ If at some point we have years of data across many sites, an ML approach may mak
 
 ## Inputs
 
-- A stream of structured consultation records from the same edge node, written by the other packages in the module.
-- Zone configuration (which administrative unit corresponds to which clinic).
-- Threshold configuration (per indicator, optional override; defaults shipped with the package).
+- Historical weekly counts for a zone-level indicator.
+- Current weekly count for the same zone-level indicator.
+- Threshold configuration, with a default z-score threshold of 2.0.
 
 ## Outputs
 
-- A weekly aggregated record per (zone, indicator), with current count, baseline mean, baseline std, z-score, and flag status.
-- An optional export adapter to push these records to: a partner NGO dashboard, a DHIS2 instance, an OpenMRS observation export, or a flat CSV/JSON for whatever pipeline the local health authority already uses.
+- Baseline mean.
+- Baseline standard deviation.
+- Z-score.
+- Flag status: `normal`, `anomaly`, `anomaly_high_severity`, or `insufficient_baseline`.
+- Severity and reason.
 
-Identifiers are stripped at the node before any record is exported. Patient-level data does not appear anywhere in the output of this package.
+The package expects aggregate counts only. Patient-level data does not appear anywhere in the package API.
 
 ## Status
 
-In active development. Target working state by 2026-05-15, with synthetic data tests covering the core statistical logic and at least one export adapter (DHIS2 web API).
+**Pre-pilot alpha.** Implemented as the standalone package `kynode-pediatric-anomaly-detection`, with synthetic tests covering the core statistical logic.
 
 Real calibration of thresholds against real consultation patterns happens during the early deployment phase post-grant — the defaults shipped with v0.x are placeholders informed by published epidemiological literature, not field data.
 
-## API (planned)
+## API
 
 ```python
-from kynode_pediatric.anomaly_detection import detect_anomalies
+from kynode_pediatric_anomaly_detection import detect_anomaly
 
-result = detect_anomalies(
-    zone="san_cristobal_norte",
-    indicator="dengue_suspicion",
-    week="2026-W19",
-    baseline_weeks=6,
+result = detect_anomaly(
+    historical_counts=[10, 12, 8, 11, 9, 13],
+    current_count=47,
     threshold_z=2.0,
 )
 
-# result.current_count == 47
-# result.baseline_mean == 12.3
-# result.baseline_std == 4.1
-# result.z_score == 8.46
-# result.flag == "anomaly"
+# result.baseline_mean == 10.5
+# result.baseline_std == 1.71
+# result.z_score == 21.37
+# result.flag == "anomaly_high_severity"
 # result.severity == "high"
 ```
 

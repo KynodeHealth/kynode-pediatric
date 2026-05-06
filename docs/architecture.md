@@ -63,6 +63,6 @@ The packages themselves are portable enough that someone could pull `growth-curv
 
 The May 2026 alpha is intentionally narrow. It demonstrates the offline package architecture, the bilingual product flow and the aggregate climate-health signal, but it does not claim field validation, independent clinical diagnosis, predictive outbreak automation, complete WHO IMCI coverage or end-to-end deployment readiness.
 
-The growth package currently uses a compact WHO LMS table with interpolation for pre-pilot demonstration. Formal deployment should either ship complete reviewed reference tables or lock the supported ages to reviewed points.
+The growth package currently uses a compact WHO LMS table with interpolation for 0-60 months. Formal deployment should replace this with complete reviewed WHO tables or keep the public API locked to explicitly reviewed age points.
 
 The Venezuela vaccination schedule is based on a public SVPP 2025 reference and is marked as pending MPPS/PAI validation before field deployment.

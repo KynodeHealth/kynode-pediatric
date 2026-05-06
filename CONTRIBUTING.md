@@ -25,7 +25,7 @@ The clinical logic is the part you have to be careful with. If you're touching:
 
 ## Local development
 
-Each package has its own README with setup instructions. Most of them are pure Python and work with a standard `pip install -e .` followed by `pytest`. The triage UI components are in TypeScript and use `npm`.
+Each package has its own README with setup instructions. The current alpha packages are pure Python and work with a standard `pip install -e .` followed by `pytest`.
 
 ## Code of Conduct
 

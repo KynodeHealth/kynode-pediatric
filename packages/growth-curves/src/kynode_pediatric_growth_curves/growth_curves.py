@@ -21,6 +21,8 @@ CLINICAL_NOTE = (
     "Growth status flag only. This output is not a diagnosis and does not "
     "replace clinical judgment."
 )
+SUPPORTED_INDICATORS = {"weight_for_age", "height_for_age", "bmi_for_age"}
+SUPPORTED_MAX_AGE_MONTHS = 60
 
 
 @dataclass(frozen=True)
@@ -43,6 +45,8 @@ def _load_tables() -> Mapping[str, object]:
 
 
 def _normalize_sex(sex: str) -> str:
+    if not isinstance(sex, str):
+        raise ValueError("sex must be 'male' or 'female'")
     normalized = sex.strip().lower()
     if normalized in {"m", "male", "masculino"}:
         return "male"
@@ -99,13 +103,23 @@ def calculate_zscore(indicator: str, age_months: int, sex: str, value: float) ->
     It returns a clinician-auditable formula string and a non-diagnostic
     interpretation flag.
     """
+    if not isinstance(indicator, str):
+        raise ValueError("indicator must be one of: weight_for_age, height_for_age, bmi_for_age")
+    if not isinstance(age_months, int):
+        raise ValueError("age_months must be an integer month value")
     if age_months < 0:
         raise ValueError("age_months cannot be negative")
-    if value <= 0:
-        raise ValueError("value must be greater than zero")
+    if age_months > SUPPORTED_MAX_AGE_MONTHS:
+        raise ValueError(f"age_months exceeds alpha maximum ({SUPPORTED_MAX_AGE_MONTHS})")
+    try:
+        measurement = float(value)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("value must be a finite number greater than zero") from exc
+    if not math.isfinite(measurement) or measurement <= 0:
+        raise ValueError("value must be a finite number greater than zero")
 
     tables = _load_tables()
-    if indicator not in tables or indicator.startswith("_"):
+    if indicator not in SUPPORTED_INDICATORS:
         raise ValueError("indicator must be one of: weight_for_age, height_for_age, bmi_for_age")
 
     sex_key = _normalize_sex(sex)
@@ -120,14 +134,14 @@ def calculate_zscore(indicator: str, age_months: int, sex: str, value: float) ->
 
     l_value, m_value, s_value = _interpolate_lms(age_table, age_months)
     if abs(l_value) > 1e-10:
-        raw_z = ((value / m_value) ** l_value - 1) / (l_value * s_value)
+        raw_z = ((measurement / m_value) ** l_value - 1) / (l_value * s_value)
         formula = (
-            f"Z = (({value:.2f}/{m_value:.4f})^{l_value:.4f} - 1) / "
+            f"Z = (({measurement:.2f}/{m_value:.4f})^{l_value:.4f} - 1) / "
             f"({l_value:.4f} * {s_value:.5f}) = {raw_z:.2f}"
         )
     else:
-        raw_z = math.log(value / m_value) / s_value
-        formula = f"Z = ln({value:.2f}/{m_value:.4f}) / {s_value:.5f} = {raw_z:.2f}"
+        raw_z = math.log(measurement / m_value) / s_value
+        formula = f"Z = ln({measurement:.2f}/{m_value:.4f}) / {s_value:.5f} = {raw_z:.2f}"
 
     z_score = max(-5.0, min(5.0, raw_z))
     formula_used = (

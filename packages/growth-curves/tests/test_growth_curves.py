@@ -38,6 +38,15 @@ def test_age_sixty_supported():
     assert result.z_score is not None
 
 
+def test_age_above_sixty_rejected_for_alpha_scope():
+    try:
+        calculate_zscore("weight_for_age", 61, "male", 19)
+    except ValueError as exc:
+        assert "alpha maximum" in str(exc)
+    else:
+        raise AssertionError("expected ValueError")
+
+
 def test_invalid_indicator_raises():
     try:
         calculate_zscore("weight_for_height", 24, "female", 12.5)
@@ -52,6 +61,15 @@ def test_negative_age_raises():
         calculate_zscore("weight_for_age", -1, "female", 12.5)
     except ValueError as exc:
         assert "negative" in str(exc)
+    else:
+        raise AssertionError("expected ValueError")
+
+
+def test_non_finite_measurement_rejected():
+    try:
+        calculate_zscore("weight_for_age", 12, "female", float("nan"))
+    except ValueError as exc:
+        assert "finite" in str(exc)
     else:
         raise AssertionError("expected ValueError")
 

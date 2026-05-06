@@ -12,7 +12,7 @@ Cuando esté completo, este manual va a cubrir:
 
 1. **Encender el sistema en tu centro.** Qué necesitas (Mini PC, energía mínima, no internet), cómo lo enciendes la primera vez, qué hacer cuando algo no prende.
 2. **Triaje pediátrico paso a paso.** Cómo registras los signos vitales de un niño, cómo lees las alertas que el sistema te muestra, cuándo escalar al médico.
-3. **Curvas de crecimiento.** Cómo registras peso y talla, cómo se interpretan los percentiles, cómo identificas desnutrición aguda y crónica antes de que sea grave.
+3. **Curvas de crecimiento.** Cómo registras peso y talla, cómo se interpretan los percentiles y cómo leer banderas de crecimiento sin convertirlas en diagnóstico automático.
 4. **Vacunación.** Cómo cargas el carnet de un niño que llega por primera vez, cómo el sistema te recuerda las próximas dosis, cómo identificas a los niños atrasados en el esquema.
 5. **Alertas de signos de alarma.** Cómo el módulo IMCI te ayuda a no dejar pasar un caso grave (deshidratación, dificultad respiratoria, fiebre alta) y por qué la decisión final siempre la toma el clínico.
 6. **Reportes para tu jefatura o autoridad sanitaria.** Cómo generas los reportes mensuales de cobertura, casos sospechosos y demás indicadores agregados, sin tener que escribirlos a mano.

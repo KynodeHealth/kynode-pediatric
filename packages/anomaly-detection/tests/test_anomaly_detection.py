@@ -41,6 +41,33 @@ def test_insufficient_history_returns_specific_flag():
     assert result.flag == "insufficient_baseline"
 
 
+def test_negative_historical_count_is_rejected_before_baseline_check():
+    try:
+        detect_anomaly([-1, 2], 4)
+    except ValueError as exc:
+        assert "negative" in str(exc)
+    else:
+        raise AssertionError("expected ValueError")
+
+
+def test_non_finite_counts_are_rejected():
+    try:
+        detect_anomaly([10, 11, float("nan")], 12)
+    except ValueError as exc:
+        assert "finite" in str(exc)
+    else:
+        raise AssertionError("expected ValueError")
+
+
+def test_non_finite_threshold_is_rejected():
+    try:
+        detect_anomaly([10, 11, 12], 13, threshold_z=float("nan"))
+    except ValueError as exc:
+        assert "finite" in str(exc)
+    else:
+        raise AssertionError("expected ValueError")
+
+
 def test_custom_threshold_changes_result():
     default = detect_anomaly([10, 12, 8, 11, 9, 13], 13, threshold_z=2.0)
     sensitive = detect_anomaly([10, 12, 8, 11, 9, 13], 13, threshold_z=1.0)

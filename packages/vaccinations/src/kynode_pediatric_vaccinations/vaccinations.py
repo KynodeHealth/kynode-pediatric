@@ -6,7 +6,7 @@ from __future__ import annotations
 import calendar
 import json
 from dataclasses import dataclass
-from datetime import date, datetime, timedelta
+from datetime import date, datetime
 from importlib import resources
 from typing import Any, Mapping, Sequence
 
@@ -31,12 +31,20 @@ class VaccinationStatus:
 def _parse_date(value: str | date | None, *, field_name: str) -> date:
     if value is None:
         return date.today()
+    if isinstance(value, datetime):
+        return value.date()
     if isinstance(value, date):
         return value
     try:
         return datetime.strptime(value, "%Y-%m-%d").date()
     except ValueError as exc:
         raise ValueError(f"{field_name} must use YYYY-MM-DD format") from exc
+
+
+def _parse_required_date(value: str | date | None, *, field_name: str) -> date:
+    if value is None:
+        raise ValueError(f"{field_name} is required")
+    return _parse_date(value, field_name=field_name)
 
 
 def _add_months(start: date, months: int) -> date:
@@ -95,7 +103,9 @@ def get_vaccination_status(
     unmatched: list[dict[str, Any]] = []
     for record in vaccinations_received:
         vaccine = record.get("vaccine")
-        record_date = _parse_date(record.get("date"), field_name="vaccinations_received.date")
+        record_date = _parse_required_date(record.get("date"), field_name="vaccinations_received.date")
+        if record_date < born_on:
+            raise ValueError("vaccinations_received.date cannot be before birth_date")
         if vaccine in schedule_ids:
             received_by_id[vaccine] = record_date
         else:

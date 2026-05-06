@@ -2,7 +2,7 @@
 // Licensed under the Apache License, Version 2.0.
 
 const state = {
-  lang: localStorage.getItem("kynode-demo-lang") || "en",
+  lang: KYNODE_I18N[localStorage.getItem("kynode-demo-lang")] ? localStorage.getItem("kynode-demo-lang") : "en",
   data: null,
 };
 
@@ -15,11 +15,14 @@ function flagLabel(flag) {
 }
 
 function setLanguage(lang) {
+  if (!KYNODE_I18N[lang]) lang = "en";
   state.lang = lang;
   localStorage.setItem("kynode-demo-lang", lang);
   document.documentElement.lang = lang;
   document.querySelectorAll(".lang").forEach((button) => {
-    button.classList.toggle("active", button.dataset.lang === lang);
+    const active = button.dataset.lang === lang;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", String(active));
   });
   document.querySelectorAll("[data-i18n]").forEach((el) => {
     el.textContent = t(el.dataset.i18n);
@@ -35,15 +38,23 @@ function chipClass(flag) {
 
 function renderList(id, items, max = 4) {
   const list = document.getElementById(id);
-  list.innerHTML = "";
+  list.replaceChildren();
   items.slice(0, max).forEach((item) => {
     const li = document.createElement("li");
-    li.innerHTML = `<strong>${item.label}</strong><span>${item.target_date || item.date || ""}</span>`;
+    const label = document.createElement("strong");
+    label.textContent = item.label;
+    const date = document.createElement("span");
+    date.textContent = item.target_date || item.date || "";
+    li.append(label, date);
     list.appendChild(li);
   });
   if (items.length === 0) {
     const li = document.createElement("li");
-    li.innerHTML = `<strong>None</strong><span>-</span>`;
+    const label = document.createElement("strong");
+    label.textContent = t("none");
+    const dash = document.createElement("span");
+    dash.textContent = "-";
+    li.append(label, dash);
     list.appendChild(li);
   }
 }
@@ -54,25 +65,28 @@ function render(data) {
   document.getElementById("child-age").textContent = `${data.child.age_months} ${t("months")}`;
   document.getElementById("child-sex").textContent = data.child.sex === "female" ? t("female") : data.child.sex;
   document.getElementById("child-zone").textContent = data.child.zone;
-  document.getElementById("privacy-copy").textContent = state.lang === "en"
-    ? data.privacy.phi_boundary
-    : "Los datos identificables permanecen en la clinica. Solo sale la senal agregada por zona.";
+  document.getElementById("privacy-copy").textContent = state.lang === "en" ? data.privacy.phi_boundary : t("privacyStatement");
 
   const triageList = document.getElementById("triage-list");
-  triageList.innerHTML = "";
+  triageList.replaceChildren();
   Object.entries(data.triage.values).forEach(([key, value]) => {
     const row = document.createElement("div");
     const flag = data.triage.flags[key];
     const range = data.triage.ranges[key];
+    const labelWrap = document.createElement("div");
+    const label = document.createElement("strong");
+    label.textContent = KYNODE_I18N[state.lang].vitals[key];
+    const rangeLabel = document.createElement("span");
+    rangeLabel.textContent = range ? `${range[0]}-${range[1]}` : "";
+    const valueLabel = document.createElement("div");
+    valueLabel.className = "metric-value";
+    valueLabel.textContent = value;
+    const chip = document.createElement("span");
+    chip.className = `chip ${chipClass(flag)}`;
+    chip.textContent = flagLabel(flag);
     row.className = "metric-row";
-    row.innerHTML = `
-      <div>
-        <strong>${KYNODE_I18N[state.lang].vitals[key]}</strong>
-        <span>${range ? `${range[0]}-${range[1]}` : ""}</span>
-      </div>
-      <div class="metric-value">${value}</div>
-      <span class="chip ${chipClass(flag)}">${flagLabel(flag)}</span>
-    `;
+    labelWrap.append(label, rangeLabel);
+    row.append(labelWrap, valueLabel, chip);
     triageList.appendChild(row);
   });
 
@@ -100,11 +114,17 @@ document.querySelectorAll(".lang").forEach((button) => {
 });
 
 fetch("data/demo-output.json")
-  .then((response) => response.json())
+  .then((response) => {
+    if (!response.ok) throw new Error(`Demo payload failed to load: ${response.status}`);
+    return response.json();
+  })
   .then((data) => {
     state.data = data;
     setLanguage(state.lang);
   })
   .catch(() => {
-    document.body.insertAdjacentHTML("beforeend", "<p class='load-error'>Run python demo/generate_demo_data.py first.</p>");
+    const error = document.createElement("p");
+    error.className = "load-error";
+    error.textContent = t("loadError");
+    document.body.appendChild(error);
   });

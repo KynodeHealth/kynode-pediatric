@@ -67,7 +67,7 @@ def test_five_year_child_complete_schedule():
         "polio_3", "rotavirus_3", "pcv_3", "mmr_1", "yellow_fever_1",
         "pcv_booster", "pentavalent_booster", "mmr_2",
     ]
-    received = [{"vaccine": vaccine, "date": "2021-01-01"} for vaccine in all_ids]
+    received = [{"vaccine": vaccine, "date": "2026-05-15"} for vaccine in all_ids]
     status = get_vaccination_status("2021-05-15", received, reference_date="2026-05-15")
     assert status.overdue == []
     assert len(status.completed) == len(all_ids)
@@ -81,3 +81,29 @@ def test_unknown_vaccine_is_returned_unmatched():
     )
     assert status.unmatched_received == [{"vaccine": "local_card_note", "date": "2026-05-15"}]
     assert status.source["validation_status"] == "reference_schedule_pending_moh_validation"
+
+
+def test_received_vaccine_date_is_required():
+    try:
+        get_vaccination_status(
+            "2026-05-15",
+            [{"vaccine": "BCG"}],
+            reference_date="2026-05-15",
+        )
+    except ValueError as exc:
+        assert "required" in str(exc)
+    else:
+        raise AssertionError("expected ValueError")
+
+
+def test_received_vaccine_before_birth_is_rejected():
+    try:
+        get_vaccination_status(
+            "2026-05-15",
+            [{"vaccine": "BCG", "date": "2026-05-14"}],
+            reference_date="2026-05-15",
+        )
+    except ValueError as exc:
+        assert "before birth_date" in str(exc)
+    else:
+        raise AssertionError("expected ValueError")

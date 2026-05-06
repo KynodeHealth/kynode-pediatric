@@ -12,7 +12,7 @@ Most rural clinics in Venezuela do not have a pediatric-specific triage form on 
 
 ## Inputs
 
-- Patient age in months. The calculator uses age in months (not years) because the reference ranges shift quickly in the first few years — a 6-month-old and a 24-month-old are very different.
+- Patient age in years. The alpha API accepts fractional years and falls back to adult ranges when age is unknown or invalid.
 - Heart rate (beats per minute)
 - Respiratory rate (breaths per minute)
 - Temperature in degrees Celsius
@@ -21,11 +21,11 @@ Most rural clinics in Venezuela do not have a pediatric-specific triage form on 
 
 ## Outputs
 
-- A `normality` flag for each measure: `normal`, `abnormal_low`, or `abnormal_high`
-- A composite `triage_level`: `green`, `yellow`, or `red`
-- A `flagged_measures` list explaining which thresholds were crossed and what the reference range was
+- A flag for each supplied measure: `normal`, `abnormal_low`, `abnormal_high`, `critical_low`, or `critical_high`.
+- The age band used for classification.
+- The reference range used for each supplied measure.
 
-The composite triage level uses a simple precedence: any `red` measure makes the visit `red`. Any `yellow` without a `red` makes the visit `yellow`. Otherwise `green`.
+The alpha package does not compute a composite triage level. It marks individual vital signs for clinician review.
 
 ## Data sources
 
@@ -38,30 +38,29 @@ We will document the exact table and version used in the source code, so that an
 
 ## Status
 
-**Spec stage.** Implementation begins after `growth-curves` and `vaccinations` reach working state. Targeted for the post-grant build phase if UNICEF funding lands; otherwise scheduled for later in 2026.
+**Pre-pilot alpha.** Implemented as the standalone package `kynode-pediatric-triage-ranges`.
 
-## API (planned)
+## API
 
 ```python
-from kynode_pediatric.triage import triage
+from kynode_pediatric_triage_ranges import classify_vitals, get_vital_ranges
 
-result = triage(
-    age_months=24,
+result = classify_vitals(
+    age_years=2,
     heart_rate=145,
     respiratory_rate=42,
     temperature_c=39.1,
     spo2=94,
 )
 
-# result.triage_level == "yellow"
-# result.flagged_measures == [
-#     {"measure": "heart_rate", "value": 145, "expected_range": (90, 140), "flag": "abnormal_high"},
-#     {"measure": "temperature_c", "value": 39.1, "expected_range": (36.0, 38.0), "flag": "abnormal_high"},
-#     {"measure": "spo2", "value": 94, "expected_range": (95, 100), "flag": "abnormal_low"},
-# ]
+# result.band_label == "toddler_1_3_years"
+# result.flags["heart_rate"] == "abnormal_high"
+# result.flags["respiratory_rate"] == "abnormal_high"
+# result.flags["temperature_c"] == "abnormal_high"
+# result.flags["spo2"] == "abnormal_low"
 ```
 
 ## Open questions
 
-- Whether to expose the raw reference ranges as a public API (so a partner could plot a custom chart, for example), or keep them internal. Leaning toward exposing them — it makes auditing easier.
-- How to handle the case where age is unknown (a foundling or a child whose mother does not have the date of birth). One option: require an estimated age and flag the result as `estimated`. Another option: refuse to triage and require entering an estimated age first. We will decide this with input from the clinicians on the pilot site before shipping.
+- Whether to add a separate composite triage level in a future package, or keep this package limited to vital-sign flags.
+- How to represent estimated age explicitly in the UI layer during field pilots.

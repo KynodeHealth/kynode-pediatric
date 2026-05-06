@@ -1,6 +1,6 @@
 # KYNODE Pediatric Growth Curves
 
-Offline WHO LMS z-score helpers for pediatric growth status flags. This package is deterministic, auditable and standalone; it does not call KYNODE core, a database or any cloud service.
+Offline WHO LMS z-score helpers for pediatric growth status flags from 0-60 months. This package is deterministic, auditable and standalone; it does not call KYNODE core, a database or any cloud service.
 
 ```bash
 pip install -e .

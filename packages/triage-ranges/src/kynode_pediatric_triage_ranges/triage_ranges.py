@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 
 
@@ -117,22 +118,34 @@ def get_vital_ranges(age_years: float | None) -> VitalRangeSet:
     Unknown or invalid ages use the adult fallback, matching the defensive
     behavior in the KYNODE consultation UI.
     """
-    if age_years is None or age_years < 0:
+    if age_years is None:
+        return ADULT_RANGES
+    try:
+        age = float(age_years)
+    except (TypeError, ValueError):
+        return ADULT_RANGES
+    if not math.isfinite(age) or age < 0:
         return ADULT_RANGES
     for upper_age, ranges in RANGE_BANDS:
-        if age_years <= upper_age:
+        if age <= upper_age:
             return ranges
     return ADULT_RANGES
 
 
 def _flag_value(value: float, vital_range: VitalRange) -> str:
-    if vital_range.crit_min is not None and value < vital_range.crit_min:
+    try:
+        numeric_value = float(value)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("vital values must be finite") from exc
+    if not math.isfinite(numeric_value):
+        raise ValueError("vital values must be finite")
+    if vital_range.crit_min is not None and numeric_value < vital_range.crit_min:
         return "critical_low"
-    if vital_range.crit_max is not None and value > vital_range.crit_max:
+    if vital_range.crit_max is not None and numeric_value > vital_range.crit_max:
         return "critical_high"
-    if value < vital_range.min:
+    if numeric_value < vital_range.min:
         return "abnormal_low"
-    if value > vital_range.max:
+    if numeric_value > vital_range.max:
         return "abnormal_high"
     return "normal"
 

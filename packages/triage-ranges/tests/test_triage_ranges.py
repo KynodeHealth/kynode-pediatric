@@ -16,6 +16,7 @@ def test_toddler_heart_rate_70_is_abnormal_low():
 def test_unknown_age_uses_adult_fallback():
     assert get_vital_ranges(None).band_label == "adult_fallback_18_plus"
     assert get_vital_ranges(-1).band_label == "adult_fallback_18_plus"
+    assert get_vital_ranges("unknown").band_label == "adult_fallback_18_plus"
 
 
 def test_spo2_89_is_critical_low():
@@ -32,3 +33,21 @@ def test_missing_values_are_omitted():
     result = classify_vitals(age_years=2, heart_rate=100)
     assert result.flags == {"heart_rate": "normal"}
     assert "respiratory_rate" not in result.flags
+
+
+def test_non_finite_vital_value_is_rejected():
+    try:
+        classify_vitals(age_years=2, heart_rate=float("nan"))
+    except ValueError as exc:
+        assert "finite" in str(exc)
+    else:
+        raise AssertionError("expected ValueError")
+
+
+def test_non_numeric_vital_value_is_rejected():
+    try:
+        classify_vitals(age_years=2, heart_rate="fast")
+    except ValueError as exc:
+        assert "finite" in str(exc)
+    else:
+        raise AssertionError("expected ValueError")
