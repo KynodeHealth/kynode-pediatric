@@ -63,7 +63,7 @@ The package expects aggregate counts only. Patient-level data does not appear an
 
 **Pre-pilot alpha.** Implemented as the standalone package `kynode-pediatric-anomaly-detection`, with synthetic tests covering the core statistical logic.
 
-Real calibration of thresholds against real consultation patterns happens during the early deployment phase post-grant — the defaults shipped with v0.x are placeholders informed by published epidemiological literature, not field data.
+Real calibration of thresholds against real consultation patterns happens during the early deployment phase post-grant. The defaults shipped with v0.x are conservative initial values, not field-calibrated thresholds.
 
 ## API
 

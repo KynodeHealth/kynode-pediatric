@@ -70,7 +70,7 @@ Equipo pequeño en Caracas y Táchira. Construimos KYNODE porque en buena parte 
 
 ## Documentación que ya existe en español
 
-- [Manual del trabajador de salud](docs/manual-trabajador-salud.md) — placeholder mientras se escribe la primera versión.
+- [Manual del trabajador de salud](docs/manual-trabajador-salud.md) — borrador inicial mientras se escribe la primera versión.
 
 El resto de la documentación técnica vive en inglés porque es el idioma en el que se discute el código a nivel global. Si quieres aportar al módulo y tu inglés no es fluido, escribe en español sin problema — el equipo es bilingüe.
 
