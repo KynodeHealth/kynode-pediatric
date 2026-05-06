@@ -1,0 +1,32 @@
+{
+  "VE": {
+    "country": "VE",
+    "schedule_name": "Venezuela pediatric reference schedule",
+    "source_name": "Sociedad Venezolana de Puericultura y Pediatria - Esquema de inmunizaciones para ninos y adolescentes en Venezuela: Recomendaciones 2025",
+    "source_url": "https://www.svpediatria.org/img/secciones/esquema-de-inmunizacion/documento/ESQUEMA_DE_INMUNIZACIONES_2025.pdf",
+    "source_date": "2025",
+    "validation_status": "reference_schedule_pending_moh_validation",
+    "notes": "Pre-pilot alpha subset focused on common early childhood doses. Formal deployments must validate against MPPS/PAI site policy.",
+    "doses": [
+      {"id": "BCG", "label": "BCG", "target_month": 0, "acceptable_early_days": 0},
+      {"id": "hepB_birth", "label": "Hepatitis B birth dose", "target_month": 0, "acceptable_early_days": 0},
+      {"id": "pentavalent_1", "label": "Pentavalent dose 1", "target_month": 2, "acceptable_early_days": 14},
+      {"id": "polio_1", "label": "Polio dose 1", "target_month": 2, "acceptable_early_days": 14},
+      {"id": "rotavirus_1", "label": "Rotavirus dose 1", "target_month": 2, "acceptable_early_days": 14},
+      {"id": "pcv_1", "label": "Pneumococcal conjugate dose 1", "target_month": 2, "acceptable_early_days": 14},
+      {"id": "pentavalent_2", "label": "Pentavalent dose 2", "target_month": 4, "acceptable_early_days": 14},
+      {"id": "polio_2", "label": "Polio dose 2", "target_month": 4, "acceptable_early_days": 14},
+      {"id": "rotavirus_2", "label": "Rotavirus dose 2", "target_month": 4, "acceptable_early_days": 14},
+      {"id": "pcv_2", "label": "Pneumococcal conjugate dose 2", "target_month": 4, "acceptable_early_days": 14},
+      {"id": "pentavalent_3", "label": "Pentavalent dose 3", "target_month": 6, "acceptable_early_days": 14},
+      {"id": "polio_3", "label": "Polio dose 3", "target_month": 6, "acceptable_early_days": 14},
+      {"id": "rotavirus_3", "label": "Rotavirus dose 3", "target_month": 6, "acceptable_early_days": 14},
+      {"id": "pcv_3", "label": "Pneumococcal conjugate dose 3", "target_month": 6, "acceptable_early_days": 14},
+      {"id": "mmr_1", "label": "MMR dose 1", "target_month": 12, "acceptable_early_days": 30},
+      {"id": "yellow_fever_1", "label": "Yellow fever dose 1", "target_month": 12, "acceptable_early_days": 30},
+      {"id": "pcv_booster", "label": "Pneumococcal conjugate booster", "target_month": 15, "acceptable_early_days": 30},
+      {"id": "pentavalent_booster", "label": "Pentavalent booster", "target_month": 18, "acceptable_early_days": 30},
+      {"id": "mmr_2", "label": "MMR dose 2", "target_month": 60, "acceptable_early_days": 60}
+    ]
+  }
+}
