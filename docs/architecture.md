@@ -6,7 +6,7 @@ KYNODE Pediatric is one module inside the larger KYNODE platform.
 
 KYNODE itself is a proprietary edge health information system built for clinics in fragile-infrastructure settings — the kind of clinic that runs on intermittent power, drops internet for days at a time, and where most consultations are still recorded on paper. The pediatric module is the part of that platform that handles children's care, and it is open source under Apache 2.0.
 
-The reason for this split: we monetize the rest of KYNODE through licensing, support and aggregated data services. The pediatric module we give back to the commons because the population it serves — children under five in low-resource settings — has a stronger case for free access than for revenue capture.
+The reason for this split: the parent KYNODE platform is sustained through licensing, implementation support and edge-hardware deployment. The pediatric module we give back to the commons because the population it serves — children under five in low-resource settings — has a stronger case for free access than for revenue capture.
 
 ## How the module is organized
 

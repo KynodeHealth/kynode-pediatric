@@ -3,8 +3,8 @@
 Offline vaccination schedule status helpers for the KYNODE Pediatric pre-pilot alpha. The bundled Venezuela schedule is a reference schedule based on public SVPP 2025 recommendations and is marked pending ministerial validation.
 
 ```bash
-pip install -e .
-python - <<'PY'
+python3 -m pip install -e .
+python3 - <<'PY'
 from kynode_pediatric_vaccinations import get_vaccination_status
 
 status = get_vaccination_status(
@@ -14,7 +14,7 @@ status = get_vaccination_status(
 )
 print(status.overdue[:3])
 PY
-pytest
+python3 -m pytest
 ```
 
 This package does not decide whether a vaccine should be administered during a visit. It organizes schedule status for clinician review.

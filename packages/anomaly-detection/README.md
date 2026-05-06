@@ -3,13 +3,13 @@
 Transparent rolling-baseline anomaly flags for aggregated pediatric climate-health indicators. This package uses simple statistics, not black-box ML.
 
 ```bash
-pip install -e .
-python - <<'PY'
+python3 -m pip install -e .
+python3 - <<'PY'
 from kynode_pediatric_anomaly_detection import detect_anomaly
 
 print(detect_anomaly([10, 12, 8, 11, 9, 13], 47))
 PY
-pytest
+python3 -m pytest
 ```
 
 Outputs are intended for aggregate surveillance review. They are not clinical diagnoses, outbreak declarations or automated public-health actions.

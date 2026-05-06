@@ -71,14 +71,14 @@ Real calibration of thresholds against real consultation patterns happens during
 from kynode_pediatric_anomaly_detection import detect_anomaly
 
 result = detect_anomaly(
-    historical_counts=[10, 12, 8, 11, 9, 13],
-    current_count=47,
+    historical_counts=[18, 24, 21, 28, 19, 26],
+    current_count=38,
     threshold_z=2.0,
 )
 
-# result.baseline_mean == 10.5
-# result.baseline_std == 1.71
-# result.z_score == 21.37
+# result.baseline_mean == 22.67
+# result.baseline_std == 3.64
+# result.z_score == 4.22
 # result.flag == "anomaly_high_severity"
 # result.severity == "high"
 ```

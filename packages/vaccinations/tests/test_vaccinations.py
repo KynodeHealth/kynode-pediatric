@@ -96,6 +96,19 @@ def test_received_vaccine_date_is_required():
         raise AssertionError("expected ValueError")
 
 
+def test_birth_date_is_required():
+    try:
+        get_vaccination_status(
+            None,
+            [],
+            reference_date="2026-05-15",
+        )
+    except ValueError as exc:
+        assert "birth_date is required" in str(exc)
+    else:
+        raise AssertionError("expected ValueError")
+
+
 def test_received_vaccine_before_birth_is_rejected():
     try:
         get_vaccination_status(
