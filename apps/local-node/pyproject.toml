@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kynode-pediatric-local-node"
+version = "0.2.0a0"
+description = "Offline local clinic node for KYNODE Pediatric pre-pilot workflows."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "Apache-2.0" }
+authors = [{ name = "KYNODE", email = "opensource@kynode.io" }]
+dependencies = [
+  "fastapi>=0.136,<1.0",
+  "uvicorn[standard]>=0.46,<1.0",
+]
+
+[project.optional-dependencies]
+test = [
+  "httpx>=0.28,<1.0",
+  "pytest>=8,<10",
+]
+
+[project.scripts]
+kynode-pediatric-local-node = "kynode_pediatric_local_node.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+kynode_pediatric_local_node = [
+  "static/*.html",
+  "static/*.css",
+  "static/*.js",
+  "static/*.svg",
+  "static/fonts/*.woff2",
+]
+
+[tool.setuptools.exclude-package-data]
+kynode_pediatric_local_node = [
+  "static/*.sqlite*",
+  "static/*.db*",
+]

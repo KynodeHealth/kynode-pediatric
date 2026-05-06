@@ -1,0 +1,58 @@
+# Build artifacts
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/.pytest_cache/
+**/.coverage
+**/htmlcov/
+**/build/
+**/dist/
+**/*.egg-info/
+
+# Local SQLite — must NEVER ship inside the image
+**/*.sqlite
+**/*.sqlite3
+**/*.sqlite3-wal
+**/*.sqlite3-shm
+**/*.db
+**/*.db-journal
+
+# VCS + IDE
+.git/
+.gitignore
+.github/
+.idea/
+.vscode/
+
+# Virtualenvs
+.venv/
+venv/
+env/
+
+# Demo (static GitHub Pages, not part of the runtime image)
+demo/
+
+# Audit / capture artifacts
+.audit-screenshots/
+.audit-screenshots-v2/
+.audit-screenshots-v3/
+.audit-screenshots-v4/
+
+# Tests are in the package (apps/local-node/tests) but we ship them too
+# so a reviewer can run pytest inside the container if they want — keep
+# them. Likewise, docs are read-only and tiny.
+
+# Docs / non-runtime
+*.md
+!README.md
+!packages/*/README.md
+docs/
+scripts/
+badges/
+
+# Misc
+.DS_Store
+**/.DS_Store
+*.log
+*.bak
+*.swp

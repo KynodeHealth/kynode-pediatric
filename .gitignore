@@ -12,6 +12,11 @@ htmlcov/
 venv/
 env/
 *.egg
+*.sqlite
+*.sqlite3
+*.sqlite3-*
+*.db
+*.db-*
 
 # Node
 node_modules/

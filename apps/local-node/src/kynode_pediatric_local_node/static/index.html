@@ -1,0 +1,690 @@
+<!doctype html>
+<!-- Copyright 2026 KYNODE. Licensed under the Apache License, Version 2.0. -->
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#10b981" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />
+    <meta name="description" content="KYNODE Pediatric Local Node — offline pediatric climate-health surveillance from the point of care." />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="KYNODE Pediatric" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin="anonymous" href="/static/fonts/InterVariable.woff2?v=0.2.0-ui12" />
+    <title>KYNODE Pediatric · Local Node</title>
+    <script src="/static/theme-bootstrap.js?v=0.2.0-ui12"></script>
+    <link rel="stylesheet" href="/static/tokens.css?v=0.2.0-ui12" />
+    <link rel="stylesheet" href="/static/local-node.css?v=0.2.0-ui12" />
+  </head>
+  <body>
+    <div class="app-frame" data-mobile-nav="closed">
+      <div id="mobile-nav-backdrop" class="mobile-nav-backdrop" tabindex="-1" aria-hidden="true"></div>
+      <aside id="sidebar" class="sidebar" aria-label="KYNODE Pediatric navigation">
+        <div class="sidebar-brand">
+          <div class="sidebar-brand-icon" aria-hidden="true">K</div>
+          <div class="sidebar-brand-text">
+            <span class="sidebar-brand-name">KYNODE</span>
+            <span class="sidebar-brand-tag">Pediatric</span>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav" aria-label="Local node sections">
+          <div class="sidebar-group-title" data-i18n="workflow">Workflow</div>
+          <a class="sidebar-link active" href="#home" data-view-link="home">
+            <span class="sidebar-link-icon" data-icon="clipboard-list" data-size="18"></span>
+            <strong data-i18n="navHome">Home</strong>
+            <span class="sidebar-link-step">01</span>
+          </a>
+          <a class="sidebar-link" href="#surveillance" data-view-link="surveillance">
+            <span class="sidebar-link-icon" data-icon="bar-chart-3" data-size="18"></span>
+            <strong data-i18n="navSurveillance">Surveillance</strong>
+            <span class="sidebar-link-step">02</span>
+          </a>
+          <a class="sidebar-link" href="#records" data-view-link="records">
+            <span class="sidebar-link-icon" data-icon="database" data-size="18"></span>
+            <strong data-i18n="navRecords">Records</strong>
+            <span class="sidebar-link-step">03</span>
+          </a>
+          <a id="open-config-sidebar" class="sidebar-link" href="#configuration" data-view-link="configuration">
+            <span class="sidebar-link-icon" data-icon="settings" data-size="18"></span>
+            <strong data-i18n="navConfig">Configuration</strong>
+            <span class="sidebar-link-step">04</span>
+          </a>
+        </nav>
+
+        <div class="sidebar-note">
+          <span class="status-dot"></span>
+          <div>
+            <strong data-i18n="offlineMode">Offline mode</strong>
+            <p data-i18n="offlineModeNote">Local service running on this machine.</p>
+          </div>
+        </div>
+      </aside>
+
+      <main class="app-shell">
+        <header class="topbar">
+          <div class="topbar-title">
+            <button id="mobile-nav-toggle" class="mobile-nav-toggle" type="button"
+                    aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar">
+              <span class="hamburger-bars" aria-hidden="true">
+                <span></span><span></span><span></span>
+              </span>
+            </button>
+            <div>
+              <p class="eyebrow" data-i18n="eyebrow">Pre-pilot local node</p>
+              <h1>KYNODE Pediatric</h1>
+            </div>
+          </div>
+          <div class="top-actions">
+            <span id="mode-pill" class="status-pill ok" data-i18n="clinicMode">Clinic mode</span>
+            <span id="current-week-pill" class="status-pill">2026-W19</span>
+            <button id="open-config" class="theme-toggle" type="button" aria-label="Open configuration" title="Open configuration">
+              <span data-icon="settings" data-size="18"></span>
+            </button>
+            <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle theme" title="Toggle theme">
+              <!-- data-class survives hydration: hydrateIcons does outerHTML
+                   replace, which strips classes from the original <span>.
+                   Passing data-class makes icons.js add the class to the
+                   SVG so the [data-theme] .theme-toggle .icon-sun/.icon-moon
+                   visibility rules continue to match after hydration. -->
+              <span data-icon="sun" data-size="18" data-class="icon-sun"></span>
+              <span data-icon="moon" data-size="18" data-class="icon-moon"></span>
+            </button>
+            <div class="lang-group" role="group" aria-label="Language">
+              <button class="lang active" type="button" data-lang="en" aria-pressed="true">EN</button>
+              <button class="lang" type="button" data-lang="es" aria-pressed="false">ES</button>
+            </div>
+          </div>
+        </header>
+
+        <section id="synthetic-banner" class="mode-banner hidden" aria-live="polite">
+          <span data-icon="flask-conical" data-size="18"></span>
+          <div>
+            <strong data-i18n="syntheticActive">Synthetic walkthrough active</strong>
+            <p data-i18n="syntheticActiveText">All weekly signal/export data is clearly marked as synthetic walkthrough data.</p>
+          </div>
+          <button id="clear-synthetic" class="secondary" type="button">
+            <span data-icon="x" data-size="16"></span>
+            <span data-i18n="clearSynthetic">Clear synthetic walkthrough</span>
+          </button>
+        </section>
+
+        <section id="public-demo-banner" class="mode-banner public-demo-banner hidden" aria-live="polite">
+          <span data-icon="alert-triangle" data-size="18"></span>
+          <div>
+            <strong data-i18n="publicDemoTitle">Public demo</strong>
+            <p data-i18n="publicDemoText">Synthetic data only. Do not enter real patient data.</p>
+          </div>
+        </section>
+
+        <section id="home" class="page-view active" data-view="home">
+        <section class="hero-card">
+          <div class="hero-copy">
+            <h2 data-i18n="heroTitle">Offline pediatric climate-health node</h2>
+            <p data-i18n="heroText">Capture a local encounter, calculate deterministic pediatric support, register weekly climate context, and prepare an aggregate export without PHI.</p>
+          </div>
+          <aside class="hero-status" aria-label="Node status">
+            <div class="hero-status-row">
+              <span data-i18n="heroNodeLabel">Node</span>
+              <strong id="hero-node-label">—</strong>
+            </div>
+            <div class="hero-status-row">
+              <span data-i18n="heroVersionLabel">Version</span>
+              <strong>v0.2.0-prepilot</strong>
+            </div>
+            <div class="hero-status-row">
+              <span data-i18n="heroLastActivityLabel">Last activity</span>
+              <strong id="hero-last-activity">—</strong>
+            </div>
+          </aside>
+        </section>
+
+        <section class="boundary-strip" aria-label="Privacy and clinical boundary">
+          <span class="boundary-pill" data-icon-prefix="shield-check">
+            <span data-i18n="localBoundary">Patient-level data stays on this device.</span>
+          </span>
+          <span class="boundary-pill" data-icon-prefix="share-2">
+            <span data-i18n="aggregateBoundary">Only aggregated zone-level signal is exportable.</span>
+          </span>
+          <span class="boundary-pill" data-icon-prefix="info">
+            <span data-i18n="clinicalBoundary">Statistical support only. No autonomous diagnosis.</span>
+          </span>
+        </section>
+
+        <section class="mobile-boundary-strip" aria-label="Privacy and clinical boundary">
+          <span data-icon="shield-check" data-size="15"></span>
+          <strong data-i18n="mobileBoundary">PHI stays local · Statistical support only</strong>
+        </section>
+
+        <section id="context-bar" class="context-bar" aria-label="Current working context">
+          <div class="context-mobile-summary">
+            <strong id="context-mobile-child" data-i18n="contextNoChild">No child selected</strong>
+            <span id="context-mobile-meta">-</span>
+          </div>
+          <div class="context-item">
+            <span data-i18n="workingContext">Working context</span>
+            <strong id="context-child" data-i18n="contextNoChild">No child selected</strong>
+          </div>
+          <div class="context-item">
+            <span data-i18n="zone">Zone</span>
+            <strong id="context-zone">-</strong>
+          </div>
+          <div class="context-item">
+            <span data-i18n="week">Week</span>
+            <strong id="context-week">-</strong>
+          </div>
+          <div class="context-item">
+            <span data-i18n="indicator">Indicator</span>
+            <strong id="context-indicator">-</strong>
+          </div>
+        </section>
+
+        <section class="workspace">
+          <form id="case-form" class="panel intake-panel">
+            <div class="panel-heading">
+              <div>
+                <h2 data-i18n="intakeTitle">Encounter intake</h2>
+                <p data-i18n="intakeSubtitle">Local patient-level data; never exported.</p>
+              </div>
+              <button id="load-synthetic" class="secondary" type="button">
+                <span data-icon="flask-conical" data-size="16"></span>
+                <span data-i18n="loadSynthetic">Load synthetic walkthrough</span>
+              </button>
+            </div>
+
+            <div class="field-grid">
+              <label>
+                <span data-i18n="localChildId">Local child ID</span>
+                <input name="local_child_id" required placeholder="LOCAL-CHILD-001" />
+              </label>
+              <label>
+                <span data-i18n="birthDate">Birth date</span>
+                <input name="birth_date" required type="date" />
+              </label>
+              <label>
+                <span data-i18n="sex">Sex</span>
+                <select name="sex">
+                  <option value="female" data-i18n="female">Female</option>
+                  <option value="male" data-i18n="male">Male</option>
+                </select>
+              </label>
+              <label>
+                <span data-i18n="zone">Zone</span>
+                <input name="zone" required placeholder="San Cristobal Norte" />
+              </label>
+              <label>
+                <span data-i18n="week">Week</span>
+                <input name="week" required pattern="^\d{4}-W\d{2}$" value="2026-W19" />
+              </label>
+              <label>
+                <span data-i18n="indicator">Syndrome indicator preview</span>
+                <select name="syndrome_indicator">
+                  <option value="dengue_suspicion" data-i18n="dengue">Dengue suspicion</option>
+                  <option value="malaria_suspicion" data-i18n="malaria">Malaria suspicion</option>
+                  <option value="diarrheal_disease" data-i18n="diarrhea">Diarrheal disease</option>
+                  <option value="heat_related_illness" data-i18n="heat">Heat-related illness</option>
+                  <option value="respiratory_outbreak" data-i18n="respiratory">Respiratory outbreak</option>
+                  <option value="malnutrition_signal" data-i18n="malnutrition">Malnutrition signal</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="section-label" data-i18n="measurements">Measurements</div>
+            <div class="field-grid compact">
+              <label>
+                <span data-i18n="weight">Weight kg</span>
+                <input name="weight_kg" required type="number" min="0" step="0.1" />
+              </label>
+              <label>
+                <span data-i18n="heartRate">Heart rate</span>
+                <input name="heart_rate" type="number" min="0" step="1" />
+              </label>
+              <label>
+                <span data-i18n="respRate">Resp. rate</span>
+                <input name="respiratory_rate" type="number" min="0" step="1" />
+              </label>
+              <label>
+                <span data-i18n="temperature">Temp C</span>
+                <input name="temperature_c" type="number" min="25" max="45" step="0.1" />
+              </label>
+              <label>
+                <span>SpO2</span>
+                <input name="spo2" type="number" min="0" max="100" step="1" />
+              </label>
+            </div>
+
+            <details class="vaccine-accordion">
+              <summary>
+                <span data-i18n="vaccines">Vaccines received</span>
+                <span class="vaccine-summary-meta">
+                  <span class="vaccine-count" id="vaccine-count">0</span>
+                  <span data-icon="chevron-down" data-size="16" class="accordion-chevron"></span>
+                </span>
+              </summary>
+              <div class="vaccine-grid" id="vaccine-grid"></div>
+            </details>
+
+            <label class="clinical-context-field">
+              <span data-i18n="context">Clinical context</span>
+              <textarea name="context" rows="2" placeholder="Local-only clinical note"></textarea>
+            </label>
+
+            <div class="button-row">
+              <button id="run-assessment" type="submit">
+                <span data-icon="play" data-size="16"></span>
+                <span data-i18n="runAssessment">Run local assessment</span>
+              </button>
+              <button id="save-encounter" class="secondary" type="button">
+                <span data-icon="save" data-size="16"></span>
+                <span data-i18n="saveEncounter">Save local encounter</span>
+              </button>
+            </div>
+          </form>
+
+          <section id="assessment-panel" class="panel results-panel" aria-live="polite">
+            <div class="panel-heading">
+              <div>
+                <h2 data-i18n="resultsTitle">Assessment results</h2>
+                <p data-i18n="resultsSubtitle">Computed locally from the encounter form.</p>
+              </div>
+              <span id="assessment-status" class="status-pill" data-i18n="waiting">Waiting</span>
+            </div>
+
+            <div id="assessment-empty" class="assessment-empty">
+              <span data-icon="activity" data-size="28"></span>
+              <strong data-i18n="assessmentEmptyTitle">Run a local assessment to see all four analyses</strong>
+              <p data-i18n="assessmentEmptyText">Triage, WHO growth, vaccination status, and syndrome indicator preview will populate here.</p>
+            </div>
+
+            <div class="result-grid">
+              <article id="triage-card" class="result-card">
+                <h3><span data-i18n="triageTitle">Pediatric triage</span><span class="result-alert" aria-hidden="true"></span></h3>
+                <div id="triage-results" class="metric-list muted-box"></div>
+              </article>
+              <article id="growth-card" class="result-card">
+                <h3><span data-i18n="growthTitle">WHO growth</span><span class="result-alert" aria-hidden="true"></span></h3>
+                <div id="growth-results" class="muted-box"></div>
+              </article>
+              <article id="vaccination-card" class="result-card">
+                <h3><span data-i18n="vaccinationTitle">Vaccination status</span><span class="result-alert" aria-hidden="true"></span></h3>
+                <div id="vaccination-results" class="muted-box"></div>
+              </article>
+              <article id="syndrome-card" class="result-card">
+                <h3><span data-i18n="syndromePreviewTitle">Syndrome indicator preview</span><span class="result-alert" aria-hidden="true"></span></h3>
+                <div id="syndrome-preview-results" class="muted-box"></div>
+              </article>
+            </div>
+          </section>
+        </section>
+
+        </section>
+
+        <section id="surveillance" class="page-view" data-view="surveillance">
+        <section class="page-header">
+          <div>
+            <p class="eyebrow" data-i18n="surveillanceEyebrow">Weekly aggregate signal</p>
+            <h2 data-i18n="surveillancePageTitle">Surveillance</h2>
+            <p data-i18n="surveillancePageSubtitle">Register aggregate counts and climate context before preparing a privacy-safe export.</p>
+          </div>
+        </section>
+
+        <section class="bottom-grid surveillance-export-grid">
+          <section id="aggregate-panel" class="panel">
+            <div class="panel-heading">
+              <div>
+                <h2 data-i18n="aggregateTitle">Export readiness</h2>
+                <p data-i18n="aggregateSubtitle">Prepare weekly aggregate export after weekly input is saved.</p>
+              </div>
+              <div class="button-row tight">
+                <button id="generate-signal" class="secondary" type="button">
+                  <span data-icon="trending-up" data-size="16"></span>
+                  <span data-i18n="generateSignal">Generate aggregate signal</span>
+                </button>
+                <button id="export-json" type="button">
+                  <span data-icon="download" data-size="16"></span>
+                  <span data-i18n="exportJson">Prepare weekly aggregate export</span>
+                </button>
+              </div>
+            </div>
+            <div id="aggregate-summary" class="signal-summary"></div>
+            <div id="privacy-checklist" class="privacy-checklist"></div>
+            <div class="export-actions hidden" aria-label="Prepared export actions">
+              <strong data-i18n="exportOutputTitle">Prepared aggregate file</strong>
+              <div class="button-row tight">
+                <button id="copy-export" class="secondary" type="button" disabled>
+                  <span data-icon="copy" data-size="16"></span>
+                  <span data-i18n="copyJson">Copy JSON</span>
+                </button>
+                <button id="download-export" class="secondary" type="button" disabled>
+                  <span data-icon="download" data-size="16"></span>
+                  <span data-i18n="downloadJson">Download file</span>
+                </button>
+              </div>
+            </div>
+            <details class="json-preview">
+              <summary data-i18n="technicalJsonPreview">Technical JSON preview</summary>
+              <pre id="export-output">{}</pre>
+            </details>
+          </section>
+        </section>
+
+        <section class="bottom-grid product-grid">
+          <section id="weekly-panel" class="panel">
+            <div class="panel-heading">
+              <div>
+                <h2 data-i18n="weeklyTitle">Weekly surveillance input</h2>
+                <p data-i18n="weeklySubtitle">Manual aggregate counts by zone, week, and indicator.</p>
+              </div>
+            </div>
+            <form id="weekly-form">
+              <div class="field-grid compact">
+                <label>
+                  <span data-i18n="zone">Zone</span>
+                  <input name="zone" required placeholder="San Cristobal Norte" />
+                </label>
+                <label>
+                  <span data-i18n="week">Week</span>
+                  <input name="week" required pattern="^\d{4}-W\d{2}$" value="2026-W19" />
+                </label>
+                <label>
+                  <span data-i18n="indicator">Indicator</span>
+                  <select name="indicator">
+                    <option value="dengue_suspicion" data-i18n="dengue">Dengue suspicion</option>
+                    <option value="malaria_suspicion" data-i18n="malaria">Malaria suspicion</option>
+                    <option value="diarrheal_disease" data-i18n="diarrhea">Diarrheal disease</option>
+                    <option value="heat_related_illness" data-i18n="heat">Heat-related illness</option>
+                    <option value="respiratory_outbreak" data-i18n="respiratory">Respiratory outbreak</option>
+                    <option value="malnutrition_signal" data-i18n="malnutrition">Malnutrition signal</option>
+                  </select>
+                </label>
+              </div>
+              <div class="field-grid">
+                <label>
+                  <span data-i18n="currentCount">Current aggregate count</span>
+                  <input name="current_count" type="number" min="0" step="1" required />
+                </label>
+                <label>
+                  <span data-i18n="baselineCounts">Baseline weekly counts</span>
+                  <input name="historical_counts" required placeholder="18, 24, 21, 28, 19, 26" />
+                </label>
+              </div>
+              <div class="button-row">
+                <button id="save-weekly-input" class="secondary" type="submit">
+                  <span data-icon="bar-chart-3" data-size="16"></span>
+                  <span data-i18n="saveWeekly">Save weekly input</span>
+                </button>
+              </div>
+            </form>
+            <div id="weekly-summary" class="signal-summary"></div>
+          </section>
+
+          <section id="climate-panel" class="panel">
+            <details class="mobile-climate-details" open>
+              <summary>
+                <span data-icon="cloud-rain" data-size="16"></span>
+                <span data-i18n="climateTitle">Weekly climate context</span>
+              </summary>
+            <div class="panel-heading climate-heading">
+              <div>
+                <h2 data-i18n="climateTitle">Weekly climate context</h2>
+                <p data-i18n="climateSubtitle">Structured local observation; no weather prediction.</p>
+              </div>
+            </div>
+            <form id="climate-form">
+              <div class="field-grid compact">
+                <label>
+                  <span data-i18n="rainfall">Rainfall</span>
+                  <select name="rainfall">
+                    <option value="unknown" data-i18n="unknown">Unknown</option>
+                    <option value="none" data-i18n="none">None</option>
+                    <option value="light" data-i18n="light">Light</option>
+                    <option value="moderate" data-i18n="moderate">Moderate</option>
+                    <option value="heavy" data-i18n="heavy">Heavy</option>
+                  </select>
+                </label>
+                <label>
+                  <span data-i18n="flooding">Flooding</span>
+                  <select name="flooding">
+                    <option value="unknown" data-i18n="unknown">Unknown</option>
+                    <option value="no" data-i18n="no">No</option>
+                    <option value="reported" data-i18n="reported">Reported</option>
+                  </select>
+                </label>
+                <label>
+                  <span data-i18n="heatAlert">Heat alert</span>
+                  <select name="heat_alert">
+                    <option value="unknown" data-i18n="unknown">Unknown</option>
+                    <option value="no" data-i18n="no">No</option>
+                    <option value="yes" data-i18n="yes">Yes</option>
+                  </select>
+                </label>
+                <label>
+                  <span data-i18n="waterDisruption">Water disruption</span>
+                  <select name="water_disruption">
+                    <option value="unknown" data-i18n="unknown">Unknown</option>
+                    <option value="no" data-i18n="no">No</option>
+                    <option value="yes" data-i18n="yes">Yes</option>
+                  </select>
+                </label>
+                <label>
+                  <span data-i18n="vectorRisk">Vector risk</span>
+                  <select name="vector_risk">
+                    <option value="unknown" data-i18n="unknown">Unknown</option>
+                    <option value="normal" data-i18n="normal">Normal</option>
+                    <option value="increased" data-i18n="increased">Increased</option>
+                  </select>
+                </label>
+                <label>
+                  <span data-i18n="climateSource">Source</span>
+                  <select name="source">
+                    <option value="clinic_observation" data-i18n="clinicObservation">Clinic observation</option>
+                    <option value="community_report" data-i18n="communityReport">Community report</option>
+                    <option value="authority_bulletin" data-i18n="authorityBulletin">Authority bulletin</option>
+                    <option value="other" data-i18n="other">Other</option>
+                  </select>
+                </label>
+              </div>
+              <label>
+                <span data-i18n="confidence">Confidence</span>
+                <select name="confidence" aria-describedby="confidence-help">
+                  <option value="low" data-i18n="confidenceLow">Low</option>
+                  <option value="medium" data-i18n="confidenceMedium">Medium</option>
+                  <option value="high" data-i18n="confidenceHigh">High</option>
+                </select>
+              </label>
+              <p id="confidence-help" class="field-help confidence-help" data-i18n="confidenceHelp">low — single observation, no corroboration
+medium — multiple observations or corroborated by community
+high — corroborated by official authority bulletin</p>
+              <label>
+                <span data-i18n="climateNotes">Climate notes</span>
+                <textarea name="notes" rows="2" placeholder="Local-only note"></textarea>
+              </label>
+              <div class="button-row">
+                <button id="save-climate-context" class="secondary" type="submit">
+                  <span data-icon="cloud-rain" data-size="16"></span>
+                  <span data-i18n="saveClimate">Save climate context</span>
+                </button>
+              </div>
+            </form>
+            </details>
+          </section>
+        </section>
+        </section>
+
+        <section id="records" class="page-view" data-view="records">
+        <section class="page-header">
+          <div>
+            <p class="eyebrow" data-i18n="recordsEyebrow">Local storage</p>
+            <h2 data-i18n="recordsPageTitle">Records</h2>
+            <p data-i18n="recordsPageSubtitle">Review local encounters and operational events stored on this device.</p>
+          </div>
+        </section>
+
+        <section class="bottom-grid records-grid">
+          <section id="history-panel" class="panel">
+            <div class="panel-heading">
+              <div>
+                <h2 data-i18n="historyTitle">Local encounter history</h2>
+                <p data-i18n="historySubtitle">Stored only in SQLite on this device.</p>
+              </div>
+            </div>
+            <div id="encounter-history" class="history-list"></div>
+          </section>
+
+          <section id="audit-panel" class="panel">
+            <div class="panel-heading">
+              <div>
+                <h2 data-i18n="auditTitle">Local audit trail</h2>
+                <p data-i18n="auditSubtitle">Operational events only; audit schema does not store PHI.</p>
+              </div>
+            </div>
+            <div id="audit-events" class="history-list"></div>
+          </section>
+        </section>
+        </section>
+
+        <section id="configuration" class="page-view configuration-page" data-view="configuration">
+          <section class="page-header">
+            <div>
+              <p class="eyebrow" data-i18n="configEyebrow">Local node settings</p>
+              <h2 data-i18n="configTitle">Configuration</h2>
+              <p data-i18n="configSubtitle">Clinic identity, local preferences, and pre-pilot limits.</p>
+            </div>
+          </section>
+
+          <div class="configuration-window">
+            <section id="node-setup-panel" class="config-section">
+              <div class="panel-heading">
+                <div>
+                  <h3 data-i18n="nodeSetupTitle">Local node setup</h3>
+                  <p data-i18n="nodeSetupSubtitle">Clinic identity used only in aggregate exports.</p>
+                </div>
+              </div>
+              <form id="node-settings-form" class="node-settings-card" aria-label="Node settings">
+                <label>
+                  <span data-i18n="clinicName">Clinic name</span>
+                  <input name="clinic_name" required />
+                </label>
+                <label>
+                  <span data-i18n="nodeLabel">Node label</span>
+                  <input name="node_label" required />
+                </label>
+                <div class="mini-row">
+                  <label>
+                    <span data-i18n="country">Country</span>
+                    <input name="country" required maxlength="2" placeholder="VE" aria-describedby="country-hint" />
+                    <small id="country-hint" class="field-hint" data-i18n="countryHint">2-letter ISO code</small>
+                  </label>
+                  <label>
+                    <span data-i18n="operator">Operator</span>
+                    <input name="operator_initials" maxlength="20" placeholder="AB" />
+                  </label>
+                </div>
+                <button id="save-node-settings" class="secondary" type="submit">
+                  <span data-icon="settings" data-size="16"></span>
+                  <span data-i18n="saveNode">Save node setup</span>
+                </button>
+              </form>
+            </section>
+
+            <section class="config-section">
+              <div class="panel-heading">
+                <div>
+                  <h3 data-i18n="localPreferencesTitle">Local preferences</h3>
+                  <p data-i18n="localPreferencesSubtitle">Language and theme are stored in this browser.</p>
+                </div>
+              </div>
+              <div class="preference-grid">
+                <div class="preference-item">
+                  <span data-i18n="languagePreference">Language</span>
+                  <div class="lang-group" role="group" aria-label="Configuration language">
+                    <button class="lang active" type="button" data-lang="en" aria-pressed="true">EN</button>
+                    <button class="lang" type="button" data-lang="es" aria-pressed="false">ES</button>
+                  </div>
+                </div>
+                <div class="preference-item">
+                  <span data-i18n="themePreference">Theme</span>
+                  <button id="theme-toggle-config" class="secondary" type="button" aria-label="Toggle theme">
+                    <span data-icon="moon" data-size="16"></span>
+                    <span data-i18n="toggleTheme">Toggle theme</span>
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            <section class="config-section">
+              <div class="panel-heading">
+                <div>
+                  <h3 data-i18n="operationalStatusTitle">Operational status</h3>
+                  <p data-i18n="operationalStatusSubtitle">Current pre-pilot runtime boundaries.</p>
+                </div>
+              </div>
+              <div class="config-status-grid">
+                <div class="status-tile">
+                  <span data-i18n="storageStatus">Storage</span>
+                  <strong data-i18n="storageLocal">Local SQLite only</strong>
+                </div>
+                <div class="status-tile">
+                  <span data-i18n="cloudSyncStatus">Cloud sync</span>
+                  <strong data-i18n="cloudSyncNotConfigured">Not configured</strong>
+                </div>
+                <div class="status-tile">
+                  <span data-i18n="versionLabel">Version</span>
+                  <strong>v0.2.0-prepilot-local-node</strong>
+                </div>
+                <div class="status-tile">
+                  <span data-i18n="schemaPolicyLabel">Schema policy</span>
+                  <strong data-i18n="schemaPolicyPrepilot">Backup and recreate during pre-pilot</strong>
+                </div>
+              </div>
+            </section>
+
+            <section class="config-section">
+              <div class="panel-heading">
+                <div>
+                  <h3 data-i18n="limitsTitle">Pre-pilot limits</h3>
+                  <p data-i18n="limitsSubtitle">Clear scope for implementers and reviewers.</p>
+                </div>
+              </div>
+              <div class="limit-list">
+                <span data-i18n="limitSynthetic">Synthetic demo data available</span>
+                <span data-i18n="limitValidation">Not field validated</span>
+                <span data-i18n="limitDiagnosis">No autonomous diagnosis</span>
+                <span data-i18n="limitGrantWork">Sync, roles, full IMCI and institutional adapters are grant-funded work</span>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <footer data-i18n="footer">Statistical support only. No autonomous diagnosis.</footer>
+      </main>
+    </div>
+
+    <nav class="mobile-tabbar" aria-label="Mobile primary navigation">
+      <a class="active" href="#home" data-view-link="home">
+        <span data-icon="clipboard-list" data-size="18"></span>
+        <strong data-i18n="navHome">Home</strong>
+      </a>
+      <a href="#surveillance" data-view-link="surveillance">
+        <span data-icon="bar-chart-3" data-size="18"></span>
+        <strong data-i18n="navSurveillance">Surveillance</strong>
+      </a>
+      <a href="#records" data-view-link="records">
+        <span data-icon="database" data-size="18"></span>
+        <strong data-i18n="navRecords">Records</strong>
+      </a>
+      <a href="#configuration" data-view-link="configuration">
+        <span data-icon="settings" data-size="18"></span>
+        <strong data-i18n="navConfigShort">Config</strong>
+      </a>
+    </nav>
+
+    <div id="toast-region" class="toast-region" role="status" aria-live="polite" aria-atomic="true"></div>
+
+    <script src="/static/icons.js?v=0.2.0-ui12" defer></script>
+    <script src="/static/local-node.js?v=0.2.0-ui12" defer></script>
+  </body>
+</html>

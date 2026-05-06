@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - pregrant-alpha
+      - "release/**"
   pull_request:
   workflow_dispatch:
 
@@ -34,7 +35,8 @@ jobs:
             -e packages/growth-curves \
             -e packages/triage-ranges \
             -e packages/anomaly-detection \
-            -e packages/vaccinations
+            -e packages/vaccinations \
+            -e "apps/local-node[test]"
 
       - name: Run tests with coverage gate
         run: |
@@ -43,6 +45,7 @@ jobs:
             --cov=kynode_pediatric_triage_ranges \
             --cov=kynode_pediatric_anomaly_detection \
             --cov=kynode_pediatric_vaccinations \
+            --cov=kynode_pediatric_local_node \
             --cov-report=term-missing \
             --cov-report=json:coverage.json \
             --cov-fail-under=80 \
