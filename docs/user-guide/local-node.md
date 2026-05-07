@@ -110,6 +110,14 @@ After the weekly input exists, select **Prepare weekly aggregate export**. The L
 
 ![Weekly aggregate signal and export readiness](../assets/user-guide/local-node-03-surveillance-export.jpg)
 
+## Surveillance brief
+
+Once the export is ready, the **AI surveillance brief** panel below it is enabled. Press **Generate brief** to render a plain-language summary of the same aggregate signal: headline, what changed this week, why it needs review, operational considerations, data-quality limits and an escalation recommendation.
+
+By default the brief is rendered by a deterministic rule-based template that ships in the package and runs without internet. If the operator has installed Ollama (see [Optional · Local LLM brief layer with Ollama](../integrations/ollama.md)), the brief is rendered by a local LLM running on the same machine or on a server inside the clinic LAN. A clinical safety gate runs on every LLM output and silently falls back to the deterministic template if the model produces diagnosis, prescription, treatment-protocol, dose, causal-claim or confirmed-outbreak phrasing.
+
+The chip on the brief output identifies the generator that ran (`Deterministic template` or `Local LLM brief · Ollama`). Every brief writes a `weekly_brief_generated` audit row whose source carries the generator name.
+
 ## Export Privacy Boundary
 
 The export is designed for zone-level signal sharing. It must not contain:

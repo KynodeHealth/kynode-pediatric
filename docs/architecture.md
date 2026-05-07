@@ -29,11 +29,13 @@ The Python packages have no shared internal dependency between them. You can pul
 
 | Concern | Where it runs | Why |
 |---|---|---|
-| Growth curve calculation | Local edge node | Reference tables are static; calculation is fast; no need for a network round-trip |
+| Growth curve calculation | Local edge node | Reference tables are static; calculation is fast; no network round-trip |
 | Triage vital flags | Local edge node | Age-banded vital checks must work even when the clinic is offline |
 | Vaccination schedule status | Local edge node | Schedule and patient history both live locally |
 | IMCI alerts | Local edge node | Deterministic rules; no AI inference needed |
 | Anomaly detection on aggregated indicators | Local node, then optional upstream system | Aggregation and z-score happen at the node; only the surveillance signal travels upstream, with identifiers already stripped |
+| Surveillance brief (deterministic by default) | Local edge node | Rule-based template renders the aggregate signal as plain language; runs without an LLM |
+| Surveillance brief (optional LLM enhancement) | Local edge node, via Ollama on `localhost` or a clinic-LAN host | Operator opt-in; runs against an offline model on hardware they control; never reaches a hosted SaaS API |
 
 Patient PHI never leaves the node. The cloud only ever sees aggregated, anonymized counts.
 
@@ -41,17 +43,27 @@ The demo makes that boundary explicit:
 
 > PHI stays inside the clinic. Only aggregated zone-level signal leaves the node.
 
-## Why we use AI elsewhere in KYNODE but not in the alerts
+## The three-layer intelligence separation
 
-KYNODE uses AI for two things in the parent platform: Whisper for Spanish speech-to-text (so a clinician can dictate observations instead of typing them), and Google's MedGemma 4B for clinical note structuring. Both run on the local node. Neither makes diagnostic calls.
+Inside this module there are three distinct kinds of "intelligence", each engineered to a different standard. Mixing them up is exactly what we are trying to avoid, so it is worth naming them explicitly.
 
-For the pediatric danger sign alerts in this module, we deliberately chose **not** to use AI. The reasons:
+### 1. Deterministic clinical alert path (point of care)
 
-1. The IMCI protocol is already a well-defined deterministic decision tree. There is no advantage to introducing model uncertainty into a process that has a deterministic correct answer.
-2. Auditability matters. A clinician should be able to read why a child got flagged. With deterministic rules they can. With a model they cannot.
-3. Children deserve the most conservative engineering choices we can make, and rule-based logic is more conservative than any generative model.
+Triage ranges, WHO Z-scores, IMCI rules and vaccination schedule status are pure rule-based logic. They produce identical output for identical input. A clinician can read the rule that fired and trace why a child was flagged. There is no model uncertainty in this layer because there does not need to be.
 
-This is not anti-AI. It's about putting the right tool in the right place.
+### 2. Deterministic anomaly signal (population level, still at the edge)
+
+Weekly aggregate counts go through a rolling-baseline z-score per zone × indicator × week. The math is auditable and the threshold is configurable. The output of this layer is the only thing the device ever exports — and even then, only after `safe_payload()` strips it down to the allowlisted fields.
+
+### 3. Optional local LLM brief (post-anonymisation, opt-in)
+
+After the anonymised aggregate export is produced, the operator can optionally enable a local LLM to render that export as a plain-language brief for public-health supervisors. The default is a deterministic template; the LLM is opt-in via `KYNODE_AI_BRIEF_PROVIDER=ollama` and is enforced to live inside the clinic's trust boundary (loopback or RFC1918 by default; explicit `KYNODE_AI_BRIEF_ALLOW_PUBLIC=true` is required to dial out).
+
+A clinical safety gate post-LLM (covering EN and ES) drops any LLM output containing diagnosis, prescription, treatment-protocol, dose, causal-claim or confirmed-outbreak phrasing, and falls back to the deterministic template silently. Audit logs record which generator actually produced each brief (`deterministic_template` vs `llm_brief_v1`).
+
+### Why this split
+
+This separation is the engineering invariant of the module. The point-of-care path is conservative because children deserve conservative engineering. The anomaly signal is deterministic because surveillance must be defensible. The brief layer is the ONLY place a generative model is allowed to render text, and even then only on data that has already crossed the privacy boundary, against output that has been validated against unsafe phrasing. The parent KYNODE platform separately uses Whisper for Spanish speech-to-text and a local clinical-note-structuring model — those run inside the parent product and do not change the contract of this open-source module.
 
 ## Cross-platform expectations
 

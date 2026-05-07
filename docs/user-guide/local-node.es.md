@@ -110,6 +110,14 @@ Cuando existe el registro semanal, selecciona **Preparar exportación agregada**
 
 ![Señal semanal y preparación de exportación](../assets/user-guide/local-node-03-surveillance-export.jpg)
 
+## Briefing de vigilancia
+
+Cuando la exportación está lista, se habilita el panel **Briefing de vigilancia con IA** debajo. Presiona **Generar briefing** para producir un resumen en lenguaje claro de la misma señal agregada: titular, qué cambió esta semana, por qué requiere revisión, consideraciones operativas, límites de calidad de datos y una recomendación de escalamiento.
+
+Por default el briefing lo genera una plantilla determinista basada en reglas que viene en el paquete y corre sin internet. Si el operador instaló Ollama (ver [Opcional · Capa de briefing con LLM local vía Ollama](../integrations/ollama.es.md)), el briefing lo genera un LLM local corriendo en la misma máquina o en un servidor dentro de la red de la clínica. Una compuerta clínica de seguridad se aplica a cada salida del LLM y silenciosamente cae a la plantilla determinista si el modelo produce frases de diagnóstico, prescripción, protocolo de tratamiento, dosis, atribución causal o brote confirmado.
+
+El chip en la salida del briefing identifica qué generador corrió (`Plantilla determinista` o `LLM local · Ollama`). Cada briefing escribe un evento de auditoría `weekly_brief_generated` cuyo `source` lleva el nombre del generador.
+
 ## Frontera De Privacidad Del Export
 
 La exportación está diseñada para compartir señal por zona. No debe contener:

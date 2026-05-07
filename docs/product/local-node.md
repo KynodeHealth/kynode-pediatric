@@ -11,6 +11,7 @@ It is designed as a small offline clinic node:
 5. Record structured weekly climate context.
 6. Generate a transparent statistical signal.
 7. Prepare an aggregate JSON export without PHI.
+8. Render a plain-language surveillance brief over that aggregate export — deterministic by default, optionally enhanced by a local LLM (Ollama) running on the same machine or inside the clinic LAN.
 
 ## Product Position
 
@@ -60,6 +61,17 @@ Exported JSON removes:
 - climate notes;
 - operator initials.
 
+## Surveillance Brief
+
+After preparing the aggregate export, the operator can press **Generate brief** on the Surveillance page. The endpoint `POST /api/brief/generate?zone=…&indicator=…&week=…&lang=en|es` re-fetches the privacy-bounded export and renders a structured brief: headline, what changed, why review is needed, operational considerations, data-quality limits, escalation recommendation. Two interchangeable generators sit behind the same schema:
+
+- `deterministic_template` (default, always offline) — rule-based render driven by the aggregate signal and the structured climate context. No model uncertainty.
+- `llm_brief_v1` (opt-in via `KYNODE_AI_BRIEF_PROVIDER=ollama`) — local LLM through Ollama or any Ollama-compatible server inside the clinic LAN. The endpoint is enforced to a private network by default; an explicit `KYNODE_AI_BRIEF_ALLOW_PUBLIC=true` is required before the call layer will dial out to a non-private host.
+
+A clinical safety gate runs on the LLM output (EN + ES patterns scanned together, regardless of the requested UI language) and rejects diagnosis, prescription, treatment-protocol, dose, causal-claim and confirmed-outbreak phrasing. Rejected output is silently replaced by the deterministic generator. Every generated brief — by either path — writes a `weekly_brief_generated` audit row whose `source` column carries the generator name (`deterministic_template` or `llm_brief_v1`), so reviewers can trace which path produced each brief.
+
+Configuration and Ollama setup are documented in [docs/integrations/ollama.md](../integrations/ollama.md) (Spanish: [ollama.es.md](../integrations/ollama.es.md)).
+
 ## What Exists In v0.2.0 Pre-Pilot
 
 - FastAPI local service.
@@ -71,6 +83,7 @@ Exported JSON removes:
 - Weekly climate context.
 - Audit trail without PHI fields.
 - Privacy-bounded aggregate export endpoint.
+- Surveillance brief endpoint with deterministic default and opt-in local LLM (Ollama) — clinical safety gate, endpoint trust boundary and `weekly_brief_generated` audit event included.
 
 ## What Remains Grant-Funded Work
 
