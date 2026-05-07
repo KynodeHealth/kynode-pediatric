@@ -574,6 +574,9 @@ def test_index_loads_design_system_assets_and_product_panels(tmp_path):
         'id="copy-export"',
         'id="download-export"',
         'class="json-preview"',
+        'id="brief-panel"',
+        'id="generate-brief"',
+        'id="brief-output"',
         'class="mobile-tabbar"',
         'data-view-link="home"',
         'data-view-link="surveillance"',
@@ -581,7 +584,7 @@ def test_index_loads_design_system_assets_and_product_panels(tmp_path):
         'data-view-link="configuration"',
     ):
         assert required in body
-    assert "?v=0.2.0-ui12" in body
+    assert "?v=0.2.0-ui15" in body
     assert "PHI exported" not in body
     assert "Prepare weekly aggregate export" in body
     assert "Technical JSON preview" in body
@@ -630,6 +633,7 @@ def test_frontend_contracts_match_clinic_mode_product_flow(tmp_path):
         "clear-synthetic": "x",
         "open-config": "settings",
         "open-config-sidebar": "settings",
+        "generate-brief": "sparkles",
     }.items():
         assert f'id="{button_id}"' in html
         assert f'data-icon="{icon_name}"' in html

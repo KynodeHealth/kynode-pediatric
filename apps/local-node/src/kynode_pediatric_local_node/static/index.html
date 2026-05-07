@@ -13,11 +13,11 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="alternate icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" href="/favicon.svg" />
-    <link rel="preload" as="font" type="font/woff2" crossorigin="anonymous" href="/static/fonts/InterVariable.woff2?v=0.2.0-ui12" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin="anonymous" href="/static/fonts/InterVariable.woff2?v=0.2.0-ui15" />
     <title>KYNODE Pediatric · Local Node</title>
-    <script src="/static/theme-bootstrap.js?v=0.2.0-ui12"></script>
-    <link rel="stylesheet" href="/static/tokens.css?v=0.2.0-ui12" />
-    <link rel="stylesheet" href="/static/local-node.css?v=0.2.0-ui12" />
+    <script src="/static/theme-bootstrap.js?v=0.2.0-ui15"></script>
+    <link rel="stylesheet" href="/static/tokens.css?v=0.2.0-ui15" />
+    <link rel="stylesheet" href="/static/local-node.css?v=0.2.0-ui15" />
   </head>
   <body>
     <div class="app-frame" data-mobile-nav="closed">
@@ -371,6 +371,28 @@
           </section>
         </section>
 
+        <section class="bottom-grid brief-grid">
+          <section id="brief-panel" class="panel">
+            <div class="panel-heading">
+              <div>
+                <h2 data-i18n="briefTitle">AI surveillance brief</h2>
+                <p data-i18n="briefSubtitle">Plain-language interpretation of the aggregate signal. Operates only on the privacy-bounded export — never on patient-level data.</p>
+              </div>
+              <div class="button-row tight">
+                <button id="generate-brief" class="secondary" type="button">
+                  <span data-icon="sparkles" data-size="16"></span>
+                  <span data-i18n="generateBrief">Generate brief</span>
+                </button>
+              </div>
+            </div>
+            <div id="brief-empty" class="empty-state brief-empty">
+              <span><strong data-i18n="briefEmptyTitle">No brief generated yet</strong></span>
+              <span data-i18n="briefEmptyText">Generate the brief after preparing the weekly aggregate export.</span>
+            </div>
+            <article id="brief-output" class="brief-output hidden" aria-live="polite"></article>
+          </section>
+        </section>
+
         <section class="bottom-grid product-grid">
           <section id="weekly-panel" class="panel">
             <div class="panel-heading">
@@ -684,7 +706,7 @@ high — corroborated by official authority bulletin</p>
 
     <div id="toast-region" class="toast-region" role="status" aria-live="polite" aria-atomic="true"></div>
 
-    <script src="/static/icons.js?v=0.2.0-ui12" defer></script>
-    <script src="/static/local-node.js?v=0.2.0-ui12" defer></script>
+    <script src="/static/icons.js?v=0.2.0-ui15" defer></script>
+    <script src="/static/local-node.js?v=0.2.0-ui15" defer></script>
   </body>
 </html>

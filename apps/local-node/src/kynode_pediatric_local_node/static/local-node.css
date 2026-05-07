@@ -1489,6 +1489,108 @@ body[data-runtime-mode="public-demo"] textarea:disabled {
   overflow: hidden;
 }
 
+/* ── AI surveillance brief panel ──
+   Sits below the export readiness panel, on the surveillance view.
+   Reads from /api/brief/generate which calls the safe-payload chokepoint
+   in brief.py — no PHI ever reaches this panel. */
+.brief-grid {
+  margin-top: var(--space-3);
+  grid-template-columns: 1fr;
+}
+
+.brief-empty {
+  padding: var(--space-5);
+  text-align: center;
+}
+
+.brief-output {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.brief-output.hidden {
+  display: none;
+}
+
+.brief-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border);
+}
+
+.brief-header h3 {
+  margin: 0;
+  font-size: var(--text-lg);
+  color: var(--text-primary);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.brief-generator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: var(--weight-semibold);
+}
+
+.brief-section {
+  display: grid;
+  gap: 4px;
+}
+
+.brief-section h4 {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.brief-section p {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+}
+
+.brief-section ul {
+  margin: 0;
+  padding-left: var(--space-4);
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+}
+
+.brief-section ul li {
+  margin-bottom: 4px;
+}
+
+.brief-disclaimer {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--primary-bg);
+  border: 1px solid var(--primary-border);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: var(--text-xs);
+  line-height: 1.5;
+}
+
+.brief-disclaimer .icon {
+  color: var(--primary-dark);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
 .json-preview summary {
   padding: var(--space-3);
   color: var(--text-secondary);

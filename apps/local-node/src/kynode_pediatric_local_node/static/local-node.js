@@ -152,6 +152,20 @@ const I18N = {
     aggregateSubtitle: "Prepare weekly aggregate export after weekly input is saved.",
     aggregateEmptyTitle: "No aggregate signal yet",
     aggregateEmptyText: "Save weekly input, then generate the signal before preparing export.",
+    briefTitle: "AI surveillance brief",
+    briefSubtitle: "Plain-language interpretation of the aggregate signal. Operates only on the privacy-bounded export — never on patient-level data.",
+    generateBrief: "Generate brief",
+    briefEmptyTitle: "No brief generated yet",
+    briefEmptyText: "Generate the brief after preparing the weekly aggregate export.",
+    briefHeadline: "Headline",
+    briefWhatChanged: "What changed",
+    briefWhyReview: "Why this needs review",
+    briefOperational: "Operational considerations",
+    briefDataLimits: "Data quality limits",
+    briefEscalation: "Escalation recommendation",
+    briefGeneratorOffline: "Deterministic template (offline, fully auditable)",
+    briefGeneratorLLM: "Local LLM brief · Ollama (offline, post-anonymisation)",
+    briefRequiresExport: "Prepare the weekly aggregate export first.",
     generateSignal: "Generate aggregate signal",
     exportJson: "Prepare weekly aggregate export",
     exportOutputTitle: "Prepared aggregate file",
@@ -260,6 +274,7 @@ const I18N = {
       climate_context_saved: "Climate context saved",
       weekly_signal_generated: "Weekly signal generated",
       weekly_export_prepared: "Aggregate export prepared",
+      weekly_brief_generated: "Surveillance brief generated",
       synthetic_walkthrough_loaded: "Synthetic walkthrough loaded",
       synthetic_walkthrough_cleared: "Synthetic walkthrough cleared"
     },
@@ -278,6 +293,8 @@ const I18N = {
       clinic_observation: "Clinic observation",
       community_report: "Community report",
       authority_bulletin: "Authority bulletin",
+      deterministic_template: "Deterministic template",
+      llm_brief_v1: "Local LLM (Ollama)",
       other: "Other"
     },
     indicatorLabels: {
@@ -460,6 +477,20 @@ const I18N = {
     aggregateSubtitle: "Prepara la exportación semanal agregada después de guardar el registro semanal.",
     aggregateEmptyTitle: "Aún no hay señal agregada",
     aggregateEmptyText: "Guarda el registro semanal y luego genera la señal antes de preparar la exportación.",
+    briefTitle: "Briefing de vigilancia con IA",
+    briefSubtitle: "Interpretación en lenguaje claro de la señal agregada. Opera únicamente sobre el export anonimizado — nunca sobre datos de paciente.",
+    generateBrief: "Generar briefing",
+    briefEmptyTitle: "Aún no hay briefing generado",
+    briefEmptyText: "Genera el briefing después de preparar el export agregado semanal.",
+    briefHeadline: "Titular",
+    briefWhatChanged: "Qué cambió",
+    briefWhyReview: "Por qué requiere revisión",
+    briefOperational: "Consideraciones operativas",
+    briefDataLimits: "Límites de calidad de los datos",
+    briefEscalation: "Recomendación de escalamiento",
+    briefGeneratorOffline: "Plantilla determinista (offline, totalmente auditable)",
+    briefGeneratorLLM: "Briefing con LLM local · Ollama (offline, post-anonimización)",
+    briefRequiresExport: "Prepara primero el export agregado semanal.",
     generateSignal: "Generar señal agregada",
     exportJson: "Preparar exportación agregada",
     exportOutputTitle: "Archivo agregado listo",
@@ -568,6 +599,7 @@ const I18N = {
       climate_context_saved: "Contexto climático guardado",
       weekly_signal_generated: "Señal semanal generada",
       weekly_export_prepared: "Exportación agregada preparada",
+      weekly_brief_generated: "Briefing de vigilancia generado",
       synthetic_walkthrough_loaded: "Recorrido sintético cargado",
       synthetic_walkthrough_cleared: "Recorrido sintético limpiado"
     },
@@ -586,6 +618,8 @@ const I18N = {
       clinic_observation: "Observación clínica",
       community_report: "Reporte comunitario",
       authority_bulletin: "Boletín de autoridad",
+      deterministic_template: "Plantilla determinista",
+      llm_brief_v1: "LLM local (Ollama)",
       other: "Otro"
     },
     indicatorLabels: {
@@ -1715,6 +1749,79 @@ async function exportJson() {
   }
 }
 
+function renderBrief(brief) {
+  const empty = document.getElementById("brief-empty");
+  const output = document.getElementById("brief-output");
+  if (!output) return;
+  if (empty) empty.classList.add("hidden");
+  output.classList.remove("hidden");
+  const generatorLabel = brief.generator === "llm_brief_v1"
+    ? t("briefGeneratorLLM")
+    : t("briefGeneratorOffline");
+  const operationalItems = (brief.operational_considerations || [])
+    .map((item) => `<li>${escapeHtml(item)}</li>`)
+    .join("");
+  const limitItems = (brief.data_quality_limits || [])
+    .map((item) => `<li>${escapeHtml(item)}</li>`)
+    .join("");
+  output.innerHTML = `
+    <header class="brief-header">
+      <h3>${escapeHtml(brief.headline)}</h3>
+      <span class="brief-generator chip ok" title="${escapeHtml(generatorLabel)}">
+        ${inlineIcon("sparkles", 14)}
+        <span>${escapeHtml(generatorLabel)}</span>
+      </span>
+    </header>
+    <section class="brief-section">
+      <h4>${t("briefWhatChanged")}</h4>
+      <p>${escapeHtml(brief.what_changed)}</p>
+    </section>
+    <section class="brief-section">
+      <h4>${t("briefWhyReview")}</h4>
+      <p>${escapeHtml(brief.why_review_needed)}</p>
+    </section>
+    <section class="brief-section">
+      <h4>${t("briefOperational")}</h4>
+      <ul>${operationalItems}</ul>
+    </section>
+    <section class="brief-section">
+      <h4>${t("briefDataLimits")}</h4>
+      <ul>${limitItems}</ul>
+    </section>
+    <section class="brief-section">
+      <h4>${t("briefEscalation")}</h4>
+      <p>${escapeHtml(brief.escalation_recommendation)}</p>
+    </section>
+    <footer class="brief-disclaimer">
+      ${inlineIcon("shield-check", 14)}
+      <span>${escapeHtml(brief.disclaimer)}</span>
+    </footer>
+  `;
+}
+
+async function generateBriefRequest() {
+  const button = document.getElementById("generate-brief");
+  if (!button) return;
+  try {
+    await withButtonLoading(button, null, async () => {
+      const payload = collectWeeklyPayload();
+      const params = new URLSearchParams({
+        zone: payload.zone,
+        indicator: payload.indicator,
+        week: payload.week,
+        lang: state.lang
+      });
+      const response = await api(`/api/brief/generate?${params.toString()}`, {
+        method: "POST"
+      });
+      renderBrief(response.brief);
+      await loadAuditEvents();
+    });
+  } catch (err) {
+    showToast(err.message || t("briefRequiresExport"), { variant: "error" });
+  }
+}
+
 async function copyExportJson() {
   const output = document.getElementById("export-output");
   const text = output?.textContent || "{}";
@@ -1806,6 +1913,7 @@ document.getElementById("climate-form").addEventListener("submit", saveClimateCo
 document.getElementById("generate-signal").addEventListener("click", generateSignal);
 document.getElementById("export-json").addEventListener("click", exportJson);
 document.getElementById("copy-export").addEventListener("click", copyExportJson);
+document.getElementById("generate-brief")?.addEventListener("click", generateBriefRequest);
 document.getElementById("download-export").addEventListener("click", downloadExportJson);
 document.getElementById("audit-events")?.addEventListener("click", (event) => {
   if (!event.target.closest("#toggle-audit-events")) return;

@@ -19,6 +19,7 @@ from .models import (
     NodeSettingsRequest,
     WeeklySignalInputRequest,
 )
+from .brief import generate_brief
 from .service import build_assessment
 from .storage import (
     LocalStore,
@@ -324,5 +325,40 @@ def create_app(
             return app.state.store.export_weekly_signal(zone=zone, indicator=indicator, week=week)
         except MissingWeeklyInputError as exc:
             raise HTTPException(status_code=409, detail=str(exc)) from exc
+
+    @app.post("/api/brief/generate")
+    def brief_generate(
+        zone: str = Query(min_length=1),
+        indicator: str = Query(min_length=1),
+        week: str | None = Query(default=None, pattern=r"^\d{4}-W\d{2}$"),
+        lang: str = Query(default="en", pattern=r"^(en|es)$"),
+    ) -> dict[str, object]:
+        # The brief sits AFTER the privacy boundary: it consumes the
+        # weekly export envelope (PHI-free) and adds an interpretation
+        # layer for public-health supervisors. We re-fetch the export
+        # rather than trusting a client-supplied JSON to keep the
+        # privacy contract auditable from a single chokepoint.
+        if app.state.public_demo_mode:
+            _require_public_demo_scope(zone, indicator, week)
+        try:
+            export = app.state.store.export_weekly_signal(
+                zone=zone, indicator=indicator, week=week
+            )
+        except MissingWeeklyInputError as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from exc
+        brief = generate_brief(export, lang=lang)
+        # Operational audit row: which brief generator ran, for which
+        # signal, in which language. The audit schema records the
+        # generator name (e.g. "deterministic_template" / "llm_brief_v1")
+        # in `source` so reviewers can trace whether a given brief came
+        # from the rule-based template or from the local LLM.
+        app.state.store.record_brief_event(
+            zone=export["zone"],
+            week=export["week"],
+            indicator=export["indicator"],
+            generator=brief.generator,
+            language=brief.language,
+        )
+        return {"brief": brief.model_dump(), "export": export}
 
     return app

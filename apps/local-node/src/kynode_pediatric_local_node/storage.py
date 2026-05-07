@@ -645,6 +645,32 @@ class LocalStore:
         )
         return payload
 
+    def record_brief_event(
+        self,
+        *,
+        zone: str,
+        week: str,
+        indicator: str,
+        generator: str,
+        language: str,
+    ) -> None:
+        """Record an audit row for a generated weekly brief.
+
+        The audit `source` field carries the generator name
+        (`deterministic_template` or `llm_brief_v1`) so reviewers can
+        tell at a glance whether a brief came from the rule-based
+        template or from the optional local LLM. The brief content
+        itself never reaches the audit table — only the operational
+        metadata, consistent with the rest of the audit schema.
+        """
+        entity_key = f"{_signal_key(zone, week, indicator)}|{language}"
+        self.audit(
+            "weekly_brief_generated",
+            "weekly_signal",
+            entity_key,
+            source=generator,
+        )
+
     def list_audit_events(self, limit: int = 25) -> list[AuditEvent]:
         with self.session() as connection:
             rows = connection.execute(
