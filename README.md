@@ -146,6 +146,7 @@ Useful entry points:
 - [Architecture](docs/architecture.md) — how the module fits together and where it sits inside KYNODE.
 - [Roadmap](ROADMAP.md) — what's built, what's being built, what's planned.
 - [Local Node product note](docs/product/local-node.md) — how the pre-pilot product surface works.
+- [Optional · Local LLM brief layer with Ollama](docs/integrations/ollama.md) — opt-in edge AI for the surveillance brief, no SaaS dependency.
 - [Demo README](demo/README.md) — how to regenerate and serve the bilingual demo.
 - [Pregrant alpha notes](docs/releases/v0.1.0-pregrant-alpha.md) — what changed, how it was verified, and what remains out of scope.
 - [Changelog](CHANGELOG.md) — release history and pending alpha notes.

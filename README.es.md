@@ -144,6 +144,7 @@ Entradas útiles:
 - [Architecture](docs/architecture.md) — cómo encaja el módulo dentro de KYNODE.
 - [Roadmap](ROADMAP.md) — qué existe, qué falta y qué financiaría el grant.
 - [Nota de producto Local Node](docs/product/local-node.md) — cómo funciona la superficie pre-piloto.
+- [Opcional · Capa de briefing con LLM local vía Ollama](docs/integrations/ollama.es.md) — IA edge opcional para el briefing de vigilancia, sin dependencia SaaS.
 - [Notas del alpha pre-grant](docs/releases/v0.1.0-pregrant-alpha.md) — cambios, verificación y límites conocidos.
 - [Changelog](CHANGELOG.md) — historial de releases y notas del alpha pendiente.
 - [Security policy](SECURITY.md) — cómo reportar temas de seguridad o privacidad.

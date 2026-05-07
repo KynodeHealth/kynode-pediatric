@@ -35,6 +35,26 @@ This is still not production clinical software. Production sync, user roles, ful
 
 We still build the module. It just takes longer because we juggle it with paying work. Estimated extension: roughly 12 to 18 months for the same scope, depending on what other grants come through.
 
+## Frontier AI, offline by design
+
+The intelligence layer of the module evolves only on the edge — never against a hosted SaaS API. Every feature below is designed to run on hardware the clinic already owns, against a local LLM (Ollama or compatible) when the operator opts in, with the privacy boundary intact in all cases.
+
+| Phase | Capability | What changes vs today |
+|---|---|---|
+| **v0.2** (now) | Local aggregate surveillance brief over the anonymised weekly export | Deterministic by default; opt-in local LLM via Ollama; cross-language safety gate (EN/ES) drops unsafe phrasing; trust boundary refuses public endpoints by default |
+| **v0.3** | Voice-to-structured-intake for CHWs and nurses, offline | A clinician dictates an encounter; on-device speech-to-text fills the structured form; the human confirms before save. No audio leaves the device. |
+| **v0.4** | IMCI explanation assistant — explains which deterministic rule fired and why | The decision stays deterministic; the LLM only narrates the reasoning so it is teachable. Same offline + opt-in contract. |
+| **v0.5** | Multilingual CHW guidance (EN, ES, regional indigenous languages) | Local LLM + glossary corpus generated locally so guidance is available in the language the family actually speaks |
+| **post-pilot** | Privacy-preserving cross-node calibration | Only aggregate signal weights travel; no patient-level data ever leaves a node. Federated-style threshold tuning that respects the privacy contract. |
+
+Each phase is gated by the same three engineering invariants:
+
+1. **Edge-first.** No new feature may require internet to function clinically.
+2. **Privacy chokepoint.** Every model interaction goes through `safe_payload()` (or its phase-specific equivalent). PHI never reaches a generative model.
+3. **Determinism for clinical decisions.** Generative models can summarise, narrate and translate. They never decide. The IMCI tree, the Z-score, the vital ranges and the anomaly detector stay deterministic.
+
+This is not a "we will sprinkle AI on top" plan. It is the staged plan to keep the entire intelligence stack inside the clinic.
+
 ## What we will not do
 
 - We will not turn this module into a diagnostic engine. It flags. The clinician decides. That line stays.
