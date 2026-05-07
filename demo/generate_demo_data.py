@@ -6,6 +6,7 @@ from __future__ import annotations
 import json
 import sys
 from dataclasses import asdict, is_dataclass
+from datetime import datetime, timezone
 from pathlib import Path
 
 
@@ -31,22 +32,23 @@ def encode(value):
 
 
 def main() -> None:
-    reference_date = "2026-05-15"
+    reference_date = "2026-05-06"
+    generated_at = datetime.now(timezone.utc).isoformat()
     child = {
-        "display_id": "LOCAL-CHILD-024",
+        "display_id": "DEMO-CHILD-024",
         "age_months": 24,
         "age_years": 2,
         "sex": "female",
         "zone": "San Cristobal Norte",
-        "context": "Recent heavy rains; clinic working offline.",
+        "context": "Synthetic walkthrough. Recent heavy rains observed locally; clinic working offline.",
     }
 
     triage = classify_vitals(
         age_years=child["age_years"],
-        heart_rate=142,
-        respiratory_rate=44,
-        temperature_c=39.8,
-        spo2=94,
+        heart_rate=138,
+        respiratory_rate=36,
+        temperature_c=39.2,
+        spo2=97,
     )
     growth = calculate_zscore(
         "weight_for_age",
@@ -55,28 +57,29 @@ def main() -> None:
         value=9.2,
     )
     vaccinations = get_vaccination_status(
-        birth_date="2024-05-15",
+        birth_date="2024-05-06",
         vaccinations_received=[
-            {"vaccine": "BCG", "date": "2024-05-16"},
-            {"vaccine": "hepB_birth", "date": "2024-05-16"},
-            {"vaccine": "pentavalent_1", "date": "2024-07-21"},
-            {"vaccine": "polio_1", "date": "2024-07-21"},
-            {"vaccine": "rotavirus_1", "date": "2024-07-21"},
-            {"vaccine": "pcv_1", "date": "2024-07-21"},
-            {"vaccine": "pentavalent_2", "date": "2024-10-02"},
+            {"vaccine": "BCG", "date": "2024-05-06"},
+            {"vaccine": "hepB_birth", "date": "2024-05-06"},
+            {"vaccine": "pentavalent_1", "date": "2024-07-06"},
+            {"vaccine": "polio_1", "date": "2024-07-06"},
+            {"vaccine": "rotavirus_1", "date": "2024-07-06"},
+            {"vaccine": "pcv_1", "date": "2024-07-06"},
+            {"vaccine": "pentavalent_2", "date": "2024-09-06"},
         ],
         reference_date=reference_date,
     )
     signal = detect_anomaly(
-        historical_counts=[10, 12, 8, 11, 9, 13],
-        current_count=47,
+        historical_counts=[18, 24, 21, 28, 19, 26],
+        current_count=38,
         threshold_z=2.0,
         minimum_baseline_mean=3.0,
     )
 
     payload = {
         "meta": {
-            "generated_at": reference_date,
+            "generated_at": generated_at,
+            "demo_reference_date": reference_date,
             "demo_type": "synthetic",
             "language_default": "en",
         },
@@ -84,10 +87,10 @@ def main() -> None:
         "triage": {
             **encode(triage),
             "values": {
-                "heart_rate": 142,
-                "respiratory_rate": 44,
-                "temperature_c": 39.8,
-                "spo2": 94,
+                "heart_rate": 138,
+                "respiratory_rate": 36,
+                "temperature_c": 39.2,
+                "spo2": 97,
             },
         },
         "growth": encode(growth),
@@ -95,22 +98,36 @@ def main() -> None:
         "signal": {
             **encode(signal),
             "zone": child["zone"],
-            "week": "2026-W20",
+            "week": "2026-W19",
             "indicator": "dengue_suspicion",
-            "historical_counts": [10, 12, 8, 11, 9, 13],
-            "current_count": 47,
+            "historical_counts": [18, 24, 21, 28, 19, 26],
+            "current_count": 38,
+            "signal_source": "synthetic_demo",
+            "climate_context": {
+                "rainfall": "heavy",
+                "flooding": "reported",
+                "heat_alert": "no",
+                "water_disruption": "yes",
+                "vector_risk": "increased",
+                "source": "clinic_observation",
+                "confidence": "medium",
+            },
             "exportable_record": {
+                "export_type": "kynode_pediatric_weekly_aggregate",
+                "schema_version": "0.2.0",
                 "zone": child["zone"],
-                "week": "2026-W20",
+                "week": "2026-W19",
                 "indicator": "dengue_suspicion",
-                "count": 47,
+                "count": 38,
                 "z_score": signal.z_score,
+                "signal_source": "synthetic_demo",
                 "contains_phi": False,
             },
         },
         "privacy": {
             "phi_boundary": "PHI stays inside the clinic. Only aggregated zone-level signal leaves the node.",
             "contains_real_patient_data": False,
+            "clinical_boundary": "Statistical support only. No autonomous diagnosis.",
         },
     }
 

@@ -2,7 +2,11 @@
 
 [![CI](https://github.com/KynodeHealth/kynode-pediatric/actions/workflows/ci.yml/badge.svg)](https://github.com/KynodeHealth/kynode-pediatric/actions/workflows/ci.yml)
 [![Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/KynodeHealth/kynode-pediatric/main/badges/coverage.json)](https://github.com/KynodeHealth/kynode-pediatric/actions/workflows/ci.yml)
-[![Demo](https://img.shields.io/badge/demo-GitHub%20Pages-0f766e)](https://kynodehealth.github.io/kynode-pediatric/)
+[![Live Local Node](https://img.shields.io/badge/live-pediatric.kynode.io-10b981)](https://pediatric.kynode.io/)
+[![Static Demo](https://img.shields.io/badge/demo-GitHub%20Pages-0f766e)](https://kynodehealth.github.io/kynode-pediatric/)
+[![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.12%2B-3776ab.svg)](apps/local-node/pyproject.toml)
+[![Status](https://img.shields.io/badge/status-pre--pilot%20alpha-d97706.svg)](#status)
 
 [English](README.md) · [Español](README.es.md)
 
@@ -46,11 +50,54 @@ In practice, KYNODE Pediatric and these tools can coexist. The aggregated weekly
 
 ## Status
 
-Pre-pilot alpha. As of May 2026, this repo contains four installable offline-ready pediatric packages (`growth-curves`, `triage-ranges`, `anomaly-detection` and `vaccinations`), a bilingual demo that consumes their generated JSON output, and documentation for the architecture and roadmap.
+Pre-pilot alpha. As of May 2026, this repo contains four installable offline-ready pediatric packages (`growth-curves`, `triage-ranges`, `anomaly-detection` and `vaccinations`), a bilingual static demo, and a pre-pilot Local Node product surface under `apps/local-node/`.
 
 This is a working open-source prototype for review, grant evaluation and technical collaboration. It is not validated clinical field software, not the full WHO IMCI scope and not an end-to-end deployment bundle.
 
-## Demo
+## Local Node MVP
+
+The current pre-pilot product surface is a local clinic node, not just a static demo. It captures a manually entered pediatric encounter, runs the four packages locally, stores the encounter in SQLite, records weekly aggregate surveillance input, records weekly climate context, and prepares only aggregate zone-level signal JSON.
+
+Public product review: [pediatric.kynode.io](https://pediatric.kynode.io/) runs in **public demo mode**. It is synthetic-only and must not be used for real patient data. For real clinic data, run the Local Node locally as shown below.
+
+<table>
+<tr>
+<td width="68%" valign="top">
+
+![Local Node desktop view](docs/assets/local-node-desktop.png)
+
+<sub>Desktop · sidebar workflow nav, local assessment, weekly surveillance input, climate context, privacy checklist and aggregate export.</sub>
+
+</td>
+<td width="32%" valign="top">
+
+![Local Node mobile view](docs/assets/local-node-mobile.png)
+
+<sub>Mobile · same data, bottom navigation, single-column task flow and dynamic viewport handling for iOS Safari.</sub>
+
+</td>
+</tr>
+</table>
+
+Run it locally:
+
+```bash
+python3 -m pip install -e packages/growth-curves
+python3 -m pip install -e packages/triage-ranges
+python3 -m pip install -e packages/anomaly-detection
+python3 -m pip install -e packages/vaccinations
+python3 -m pip install -e apps/local-node
+
+python3 -m kynode_pediatric_local_node
+```
+
+Then open `http://localhost:8080`.
+
+User guide with screenshots: [docs/user-guide/local-node.md](docs/user-guide/local-node.md) · [Spanish](docs/user-guide/local-node.es.md)
+
+The Local Node is pre-pilot software. It is not field validated, does not provide autonomous diagnosis, does not call a weather API, and does not include production sync, roles, full IMCI or institutional adapters yet.
+
+## Static Demo
 
 The demo is a synthetic pediatric case running through the four alpha packages.
 
@@ -78,18 +125,18 @@ Run the alpha locally:
 git clone https://github.com/<org>/kynode-pediatric
 cd kynode-pediatric
 
-pip install -e packages/growth-curves
-pip install -e packages/triage-ranges
-pip install -e packages/anomaly-detection
-pip install -e packages/vaccinations
+python3 -m pip install -e packages/growth-curves
+python3 -m pip install -e packages/triage-ranges
+python3 -m pip install -e packages/anomaly-detection
+python3 -m pip install -e packages/vaccinations
 
-pytest packages/growth-curves/tests
-pytest packages/triage-ranges/tests
-pytest packages/anomaly-detection/tests
-pytest packages/vaccinations/tests
+python3 -m pytest packages/growth-curves/tests
+python3 -m pytest packages/triage-ranges/tests
+python3 -m pytest packages/anomaly-detection/tests
+python3 -m pytest packages/vaccinations/tests
 
-python demo/generate_demo_data.py
-python -m http.server 8080 -d demo
+python3 demo/generate_demo_data.py
+python3 -m http.server 8080 -d demo
 ```
 
 Then open `http://localhost:8080`.
@@ -98,14 +145,28 @@ Useful entry points:
 
 - [Architecture](docs/architecture.md) — how the module fits together and where it sits inside KYNODE.
 - [Roadmap](ROADMAP.md) — what's built, what's being built, what's planned.
+- [Local Node product note](docs/product/local-node.md) — how the pre-pilot product surface works.
+- [Optional · Local LLM brief layer with Ollama](docs/integrations/ollama.md) — opt-in edge AI for the surveillance brief, no SaaS dependency.
 - [Demo README](demo/README.md) — how to regenerate and serve the bilingual demo.
 - [Pregrant alpha notes](docs/releases/v0.1.0-pregrant-alpha.md) — what changed, how it was verified, and what remains out of scope.
 - [Changelog](CHANGELOG.md) — release history and pending alpha notes.
 - [Security policy](SECURITY.md) — how to report security or privacy concerns.
 
+## Design system
+
+The Local Node app and the static demo share one design system: same Inter Variable font (self-hosted, offline-safe), same `tokens.css` (light + dark themes, ~135 design tokens), same Lucide icon library, same theme bootstrap script. The shared files live in `apps/local-node/src/kynode_pediatric_local_node/static/` and are vendored into `demo/static/` so the demo stays self-contained.
+
+To propagate changes from the app to the demo:
+
+```bash
+bash scripts/sync-design-system.sh
+```
+
+Tests in `tests/test_demo_design_system.py` enforce byte-identity of the vendored files and zero hardcoded colors in the demo CSS, so a drift between the two surfaces fails CI.
+
 ## Why open source
 
-Children's health doesn't compete on closed code. It competes on whether the tool actually reaches the clinic. We monetize the rest of KYNODE; this module we give back.
+Children's health doesn't compete on closed code. It competes on whether the tool actually reaches the clinic. The rest of KYNODE is sustained commercially; this module we give back.
 
 ## Who's behind this
 

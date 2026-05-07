@@ -1,24 +1,25 @@
 {
   "meta": {
-    "generated_at": "2026-05-15",
+    "generated_at": "2026-05-07T01:24:53.821277+00:00",
+    "demo_reference_date": "2026-05-06",
     "demo_type": "synthetic",
     "language_default": "en"
   },
   "child": {
-    "display_id": "LOCAL-CHILD-024",
+    "display_id": "DEMO-CHILD-024",
     "age_months": 24,
     "age_years": 2,
     "sex": "female",
     "zone": "San Cristobal Norte",
-    "context": "Recent heavy rains; clinic working offline."
+    "context": "Synthetic walkthrough. Recent heavy rains observed locally; clinic working offline."
   },
   "triage": {
     "band_label": "toddler_1_3_years",
     "flags": {
       "heart_rate": "abnormal_high",
-      "respiratory_rate": "abnormal_high",
-      "temperature_c": "critical_high",
-      "spo2": "abnormal_low"
+      "respiratory_rate": "normal",
+      "temperature_c": "abnormal_high",
+      "spo2": "normal"
     },
     "ranges": {
       "heart_rate": [
@@ -40,10 +41,10 @@
     },
     "clinical_note": "Age-banded vital sign flag only. This output is not a diagnosis, triage order or treatment recommendation.",
     "values": {
-      "heart_rate": 142,
-      "respiratory_rate": 44,
-      "temperature_c": 39.8,
-      "spo2": 94
+      "heart_rate": 138,
+      "respiratory_rate": 36,
+      "temperature_c": 39.2,
+      "spo2": 97
     }
   },
   "growth": {
@@ -60,44 +61,44 @@
       {
         "vaccine": "BCG",
         "label": "BCG",
-        "target_date": "2024-05-15",
-        "date": "2024-05-16"
+        "target_date": "2024-05-06",
+        "date": "2024-05-06"
       },
       {
         "vaccine": "hepB_birth",
         "label": "Hepatitis B birth dose",
-        "target_date": "2024-05-15",
-        "date": "2024-05-16"
+        "target_date": "2024-05-06",
+        "date": "2024-05-06"
       },
       {
         "vaccine": "pentavalent_1",
         "label": "Pentavalent dose 1",
-        "target_date": "2024-07-15",
-        "date": "2024-07-21"
+        "target_date": "2024-07-06",
+        "date": "2024-07-06"
       },
       {
         "vaccine": "polio_1",
         "label": "Polio dose 1",
-        "target_date": "2024-07-15",
-        "date": "2024-07-21"
+        "target_date": "2024-07-06",
+        "date": "2024-07-06"
       },
       {
         "vaccine": "rotavirus_1",
         "label": "Rotavirus dose 1",
-        "target_date": "2024-07-15",
-        "date": "2024-07-21"
+        "target_date": "2024-07-06",
+        "date": "2024-07-06"
       },
       {
         "vaccine": "pcv_1",
         "label": "Pneumococcal conjugate dose 1",
-        "target_date": "2024-07-15",
-        "date": "2024-07-21"
+        "target_date": "2024-07-06",
+        "date": "2024-07-06"
       },
       {
         "vaccine": "pentavalent_2",
         "label": "Pentavalent dose 2",
-        "target_date": "2024-09-15",
-        "date": "2024-10-02"
+        "target_date": "2024-09-06",
+        "date": "2024-09-06"
       }
     ],
     "due": [],
@@ -105,64 +106,64 @@
       {
         "vaccine": "polio_2",
         "label": "Polio dose 2",
-        "target_date": "2024-09-15"
+        "target_date": "2024-09-06"
       },
       {
         "vaccine": "rotavirus_2",
         "label": "Rotavirus dose 2",
-        "target_date": "2024-09-15"
+        "target_date": "2024-09-06"
       },
       {
         "vaccine": "pcv_2",
         "label": "Pneumococcal conjugate dose 2",
-        "target_date": "2024-09-15"
+        "target_date": "2024-09-06"
       },
       {
         "vaccine": "pentavalent_3",
         "label": "Pentavalent dose 3",
-        "target_date": "2024-11-15"
+        "target_date": "2024-11-06"
       },
       {
         "vaccine": "polio_3",
         "label": "Polio dose 3",
-        "target_date": "2024-11-15"
+        "target_date": "2024-11-06"
       },
       {
         "vaccine": "rotavirus_3",
         "label": "Rotavirus dose 3",
-        "target_date": "2024-11-15"
+        "target_date": "2024-11-06"
       },
       {
         "vaccine": "pcv_3",
         "label": "Pneumococcal conjugate dose 3",
-        "target_date": "2024-11-15"
+        "target_date": "2024-11-06"
       },
       {
         "vaccine": "mmr_1",
         "label": "MMR dose 1",
-        "target_date": "2025-05-15"
+        "target_date": "2025-05-06"
       },
       {
         "vaccine": "yellow_fever_1",
         "label": "Yellow fever dose 1",
-        "target_date": "2025-05-15"
+        "target_date": "2025-05-06"
       },
       {
         "vaccine": "pcv_booster",
         "label": "Pneumococcal conjugate booster",
-        "target_date": "2025-08-15"
+        "target_date": "2025-08-06"
       },
       {
         "vaccine": "pentavalent_booster",
         "label": "Pentavalent booster",
-        "target_date": "2025-11-15"
+        "target_date": "2025-11-06"
       }
     ],
     "upcoming": [
       {
         "vaccine": "mmr_2",
         "label": "MMR dose 2",
-        "target_date": "2029-05-15"
+        "target_date": "2029-05-06"
       }
     ],
     "unmatched_received": [],
@@ -178,36 +179,50 @@
     "clinical_note": "Vaccination schedule status only. This output is not an instruction to administer a vaccine and does not replace local clinical policy."
   },
   "signal": {
-    "baseline_mean": 10.5,
-    "baseline_std": 1.71,
-    "z_score": 21.37,
+    "baseline_mean": 22.67,
+    "baseline_std": 3.64,
+    "z_score": 4.22,
     "flag": "anomaly_high_severity",
     "severity": "high",
     "reason": "Current count exceeds the rolling baseline threshold.",
     "clinical_note": "Aggregate statistical signal only. This output is not a diagnosis, outbreak declaration or automated action trigger.",
     "zone": "San Cristobal Norte",
-    "week": "2026-W20",
+    "week": "2026-W19",
     "indicator": "dengue_suspicion",
     "historical_counts": [
-      10,
-      12,
-      8,
-      11,
-      9,
-      13
+      18,
+      24,
+      21,
+      28,
+      19,
+      26
     ],
-    "current_count": 47,
+    "current_count": 38,
+    "signal_source": "synthetic_demo",
+    "climate_context": {
+      "rainfall": "heavy",
+      "flooding": "reported",
+      "heat_alert": "no",
+      "water_disruption": "yes",
+      "vector_risk": "increased",
+      "source": "clinic_observation",
+      "confidence": "medium"
+    },
     "exportable_record": {
+      "export_type": "kynode_pediatric_weekly_aggregate",
+      "schema_version": "0.2.0",
       "zone": "San Cristobal Norte",
-      "week": "2026-W20",
+      "week": "2026-W19",
       "indicator": "dengue_suspicion",
-      "count": 47,
-      "z_score": 21.37,
+      "count": 38,
+      "z_score": 4.22,
+      "signal_source": "synthetic_demo",
       "contains_phi": false
     }
   },
   "privacy": {
     "phi_boundary": "PHI stays inside the clinic. Only aggregated zone-level signal leaves the node.",
-    "contains_real_patient_data": false
+    "contains_real_patient_data": false,
+    "clinical_boundary": "Statistical support only. No autonomous diagnosis."
   }
 }

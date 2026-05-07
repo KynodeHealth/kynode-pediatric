@@ -1,12 +1,24 @@
 <!doctype html>
 <!-- Copyright 2026 KYNODE. Licensed under the Apache License, Version 2.0. -->
-<html lang="en">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>KYNODE Pediatric Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#10b981" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />
+    <meta name="description" content="KYNODE Pediatric — offline pediatric climate-health surveillance from the point of care." />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="KYNODE Pediatric" />
+    <title>KYNODE Pediatric · Demo</title>
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="static/kynode-pediatric.css" />
+    <link rel="apple-touch-icon" href="favicon.svg" />
+    <!-- Preload the variable font so it doesn't sit behind the CSS chain
+         and delay LCP. Same trick as the local-node app. -->
+    <link rel="preload" as="font" type="font/woff2" crossorigin="anonymous" href="static/fonts/InterVariable.woff2?v=0.2.0" />
+    <script src="static/theme-bootstrap.js?v=0.2.0"></script>
+    <link rel="stylesheet" href="static/tokens.css?v=0.2.0" />
+    <link rel="stylesheet" href="static/kynode-pediatric.css?v=0.2.0" />
   </head>
   <body>
     <main class="shell">
@@ -16,9 +28,15 @@
           <h1>KYNODE Pediatric</h1>
           <p class="subtitle" data-i18n="subtitle">Offline pediatric climate-health surveillance from the point of care</p>
         </div>
-        <div class="hero-actions" aria-label="Language">
-          <button class="lang active" type="button" data-lang="en" aria-pressed="true">EN</button>
-          <button class="lang" type="button" data-lang="es" aria-pressed="false">ES</button>
+        <div class="hero-actions">
+          <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle theme" title="Toggle theme">
+            <span class="icon-sun" data-icon="sun" data-size="18"></span>
+            <span class="icon-moon" data-icon="moon" data-size="18"></span>
+          </button>
+          <div class="lang-group" role="group" aria-label="Language">
+            <button class="lang active" type="button" data-lang="en" aria-pressed="true">EN</button>
+            <button class="lang" type="button" data-lang="es" aria-pressed="false">ES</button>
+          </div>
         </div>
       </header>
 
@@ -115,7 +133,11 @@
       </footer>
     </main>
 
-    <script src="static/i18n.js"></script>
-    <script src="static/demo.js"></script>
+    <!-- defer so script parsing/execution doesn't block render. demo.js
+         already wires up after the icons + i18n modules expose their
+         globals; the relative load order is preserved by `defer`. -->
+    <script src="static/icons.js?v=0.2.0" defer></script>
+    <script src="static/i18n.js?v=0.2.0" defer></script>
+    <script src="static/demo.js?v=0.2.0" defer></script>
   </body>
 </html>

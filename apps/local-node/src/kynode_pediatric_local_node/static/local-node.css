@@ -1,0 +1,2567 @@
+/*
+ * Copyright 2026 KYNODE
+ * Licensed under the Apache License, Version 2.0.
+ *
+ * Local Node — component layer.
+ * All design tokens live in tokens.css and are referenced here.
+ */
+
+body {
+  background:
+    linear-gradient(180deg, var(--primary-bg) 0%, transparent 260px),
+    var(--bg-primary);
+  /* Reserve room for the iPhone / iPad notch and home indicator.
+     env() resolves to 0px on devices without insets, so this is a no-op
+     on desktop. The custom-prop layer (--safe-area-*) lets a native shell
+     (Capacitor, Tauri) inject explicit values when env() isn't reliable. */
+  padding-top: var(--safe-area-top);
+  padding-right: var(--safe-area-right);
+  padding-bottom: var(--safe-area-bottom);
+  padding-left: var(--safe-area-left);
+}
+
+/* When the layout has its own sticky regions (sidebar, topbar) the body-level
+   padding above is the right baseline. Inner sticky elements re-apply only
+   the side they need (sidebar gets left+top, footer gets bottom). The full
+   .app-frame layout (grid columns, min-height) lives below near the sidebar
+   declaration to keep the grid contract in one place. */
+
+/* ── Lucide icon defaults ── */
+.icon {
+  display: inline-block;
+  flex-shrink: 0;
+  vertical-align: -0.15em;
+}
+
+.icon-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+button .icon,
+.button-row .icon {
+  vertical-align: middle;
+}
+
+/* ── Theme toggle button (topbar) ── */
+.theme-toggle {
+  min-height: 38px;
+  width: 38px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.theme-toggle:hover {
+  color: var(--primary);
+  background: var(--bg-card-hover);
+  border-color: var(--primary-border);
+  transform: translateY(-1px);
+}
+
+[data-theme="light"] .theme-toggle .icon-moon {
+  display: inline-block;
+}
+
+[data-theme="light"] .theme-toggle .icon-sun {
+  display: none;
+}
+
+[data-theme="dark"] .theme-toggle .icon-moon {
+  display: none;
+}
+
+[data-theme="dark"] .theme-toggle .icon-sun {
+  display: inline-block;
+}
+
+/* Group language buttons in topbar (cosmetic alignment) */
+.top-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.lang-group {
+  display: inline-flex;
+  gap: 2px;
+  padding: 2px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  min-height: 42px;
+  padding: 0 18px;
+  color: var(--text-on-accent);
+  background: var(--primary-gradient);
+  border: 1px solid var(--primary-border);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 10px 20px -10px var(--primary-shadow);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+button.secondary {
+  color: var(--primary-dark);
+  background: var(--bg-card);
+  border-color: var(--border);
+  box-shadow: none;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+button.secondary:hover {
+  background: var(--bg-card-hover);
+}
+
+.app-frame {
+  display: grid;
+  grid-template-columns: 264px minmax(0, 1fr);
+  min-height: 100vh;
+  /* Use the dynamic viewport unit so iOS Safari's collapsing toolbar
+     doesn't crop the bottom of the layout. Falls back to vh on browsers
+     that don't support dvh. */
+  min-height: 100dvh;
+}
+
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 22px 18px;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+}
+
+.sidebar-brand-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  color: var(--text-on-accent);
+  background: var(--primary-gradient);
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 12px -6px var(--primary-shadow);
+  font-size: 19px;
+  font-weight: var(--weight-extrabold);
+  letter-spacing: 0;
+}
+
+.sidebar-brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  line-height: 1.1;
+}
+
+.sidebar-brand-name {
+  font-size: var(--text-md);
+  font-weight: var(--weight-bold);
+  letter-spacing: 0;
+  color: var(--text-primary);
+}
+
+.sidebar-brand-tag {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0;
+  color: var(--text-muted);
+}
+
+.sidebar-nav {
+  display: grid;
+  gap: 8px;
+}
+
+.sidebar-group-title,
+.eyebrow,
+label span,
+.section-label,
+.signal-summary span {
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.sidebar-group-title {
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+  padding: 10px 12px;
+  color: var(--text-secondary);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transition: var(--transition-fast);
+}
+
+.sidebar-link:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.sidebar-link-icon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  color: var(--text-muted);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+  transition: var(--transition-fast);
+}
+
+.sidebar-link strong {
+  flex: 1;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+}
+
+.sidebar-link-step {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  color: var(--text-muted);
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.sidebar-link.active,
+.sidebar-link:hover {
+  color: var(--text-primary);
+  background: var(--primary-bg);
+  border-color: var(--primary-border);
+}
+
+.sidebar-link.active .sidebar-link-icon,
+.sidebar-link:hover .sidebar-link-icon {
+  color: var(--primary-dark);
+  background: var(--bg-card);
+}
+
+.sidebar-link.active .sidebar-link-step,
+.sidebar-link:hover .sidebar-link-step {
+  color: var(--primary-dark);
+}
+
+.sidebar-note {
+  display: flex;
+  gap: 10px;
+  margin-top: auto;
+  padding: 14px;
+  background: var(--primary-bg);
+  border: 1px solid var(--primary-border);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+}
+
+.sidebar-note p {
+  margin: 3px 0 0;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.status-dot {
+  flex: 0 0 auto;
+  width: 10px;
+  height: 10px;
+  margin-top: 5px;
+  border-radius: 50%;
+  background: var(--primary);
+  box-shadow: 0 0 0 4px var(--primary-bg);
+}
+
+.app-shell {
+  width: min(1240px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 22px 0 26px;
+}
+
+.page-view {
+  display: none;
+}
+
+.page-view.active {
+  display: block;
+}
+
+.page-header {
+  margin-bottom: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.page-header h2 {
+  margin-bottom: var(--space-1);
+  font-size: var(--text-2xl);
+}
+
+.page-header p:last-child {
+  margin-bottom: 0;
+  color: var(--text-secondary);
+}
+
+.topbar,
+.panel-heading,
+.button-row,
+.boundary-strip {
+  display: flex;
+  align-items: center;
+}
+
+.topbar {
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  color: var(--primary-dark);
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  margin-bottom: 0;
+  font-size: 42px;
+  line-height: 1.04;
+  letter-spacing: 0;
+}
+
+h2 {
+  margin-bottom: 5px;
+  font-size: 21px;
+  letter-spacing: 0;
+}
+
+h3 {
+  margin-bottom: 10px;
+  color: var(--primary-dark);
+  font-size: 13px;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.top-actions {
+  display: inline-flex;
+  padding: 4px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+}
+
+.lang {
+  min-width: 46px;
+  min-height: 34px;
+  height: 34px;
+  color: var(--text-muted);
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+.lang.active {
+  color: var(--text-on-accent);
+  background: var(--primary-dark);
+}
+
+.hero-card {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 16px;
+  padding: 28px 32px;
+  background: linear-gradient(135deg, var(--primary-bg), transparent 80%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+/* Right-side status card sitting opposite the hero copy. Pulls live node
+   identity + most recent audit timestamp from the API so the hero stops
+   feeling decorative and starts looking operationally accurate. Replaces
+   the node-settings form that lived here before — that form moved to
+   the Configuration page. */
+.hero-status {
+  display: grid;
+  align-content: center;
+  gap: 10px;
+  min-width: 220px;
+  padding: 16px 18px;
+  background: color-mix(in srgb, var(--bg-card) 88%, transparent);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  backdrop-filter: blur(10px);
+}
+
+.hero-status-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: baseline;
+}
+
+.hero-status-row span {
+  font-size: 11px;
+  font-weight: var(--weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.hero-status-row strong {
+  text-align: right;
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: break-word;
+  min-width: 0;
+}
+
+.context-bar {
+  position: sticky;
+  top: 10px;
+  z-index: 8;
+  display: grid;
+  grid-template-columns: 1.4fr repeat(3, minmax(130px, 1fr));
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+  padding: var(--space-2);
+  background: color-mix(in srgb, var(--bg-card) 92%, transparent);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(14px);
+}
+
+.context-item {
+  min-width: 0;
+  padding: 9px 11px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+}
+
+.context-item span {
+  display: block;
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  text-transform: uppercase;
+}
+
+.context-item strong {
+  display: block;
+  margin-top: 3px;
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hero-copy {
+  max-width: 760px;
+}
+
+.hero-copy h2 {
+  margin-bottom: 8px;
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-bold);
+  letter-spacing: 0;
+  color: var(--text-primary);
+}
+
+.hero-copy p:last-child {
+  max-width: 720px;
+  margin-bottom: 0;
+  color: var(--text-secondary);
+  font-size: var(--text-md);
+}
+
+/* Hover lift kept here for .panel because the same component is reused
+   in every section. Card-level hover styling for the now-removed
+   .stats-grid is intentionally gone. */
+.panel:hover {
+  border-color: var(--primary-border);
+  box-shadow: var(--shadow-md);
+}
+
+/* Single empty state for the home assessment panel. Replaces the four
+   identical "Run an assessment to populate this panel" copies that the
+   four result cards used to repeat — visually noisy and made the panel
+   look unfinished. After running an assessment, JS hides this block and
+   shows the .result-grid. */
+.assessment-empty {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-2);
+  padding: var(--space-6) var(--space-4);
+  text-align: center;
+  color: var(--text-muted);
+  background: var(--bg-secondary);
+  border: 1px dashed var(--border-light);
+  border-radius: var(--radius-md);
+}
+
+.assessment-empty[hidden] {
+  display: none;
+}
+
+.assessment-empty .icon {
+  color: var(--primary);
+  opacity: 0.55;
+}
+
+.assessment-empty strong {
+  font-size: var(--text-md);
+  color: var(--text-primary);
+  max-width: 380px;
+}
+
+.assessment-empty p {
+  margin-bottom: 0;
+  max-width: 420px;
+  font-size: var(--text-sm);
+}
+
+.results-panel.has-results .assessment-empty,
+.results-panel:not(.has-results) .result-grid {
+  display: none;
+}
+
+.boundary-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.boundary-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 10px 14px;
+  color: var(--text-secondary);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  line-height: 1.3;
+}
+
+.boundary-pill::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--primary);
+  flex-shrink: 0;
+}
+
+.boundary-pill + .boundary-pill::before {
+  background: var(--yellow);
+}
+
+.mobile-boundary-strip,
+.context-mobile-summary,
+.mobile-tabbar {
+  display: none;
+}
+
+.status-pill,
+.chip {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 28px;
+  padding: 5px 10px;
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.workspace,
+.bottom-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.workspace {
+  grid-template-columns: minmax(420px, 0.88fr) minmax(520px, 1.12fr);
+  margin-bottom: 16px;
+}
+
+.bottom-grid {
+  grid-template-columns: 0.85fr 1.15fr;
+}
+
+.surveillance-export-grid {
+  grid-template-columns: 1fr;
+  margin-top: var(--space-3);
+}
+
+.records-grid {
+  grid-template-columns: minmax(360px, 0.85fr) minmax(440px, 1.15fr);
+}
+
+.panel {
+  padding: 22px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.results-panel {
+  min-height: 620px;
+}
+
+.panel-heading {
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.panel-heading p,
+label span,
+.muted,
+footer {
+  color: var(--text-muted);
+}
+
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.field-grid.compact {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+label {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  min-height: 42px;
+  padding: 9px 11px;
+  color: var(--text-primary);
+  background: var(--bg-input);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-bg);
+  outline: none;
+}
+
+/* Native date pickers in dark mode get the emerald-tinted filter so the
+   browser-injected calendar chrome doesn't look like a system pop-out. */
+[data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: var(--date-picker-filter);
+}
+
+/* ── Vaccine accordion ──
+   The full PAI schedule is 19 doses; rendered flat it dominated the form.
+   Collapsed by default with a count badge so the user sees the current
+   state at a glance, expands only when editing. */
+.vaccine-accordion {
+  margin-top: var(--space-3);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: var(--transition-fast);
+}
+
+.vaccine-accordion[open] {
+  border-color: var(--primary-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.vaccine-accordion summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--text-primary);
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+
+.vaccine-accordion summary::-webkit-details-marker {
+  display: none;
+}
+
+.vaccine-accordion summary:hover {
+  background: var(--bg-card-hover);
+}
+
+.vaccine-summary-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.vaccine-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 var(--space-2);
+  background: var(--primary-bg);
+  border-radius: var(--radius-full);
+  color: var(--primary-dark);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+}
+
+.accordion-chevron {
+  color: var(--text-muted);
+  transition: transform var(--transition-fast);
+}
+
+.vaccine-accordion[open] .accordion-chevron {
+  transform: rotate(180deg);
+}
+
+.vaccine-accordion .vaccine-grid {
+  padding: 0 var(--space-4) var(--space-4);
+  border-top: 1px solid var(--border-light);
+}
+
+textarea {
+  min-height: 70px;
+  resize: vertical;
+}
+
+.section-label {
+  margin: 12px 0 8px;
+  color: var(--primary-dark);
+}
+
+.vaccine-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.vaccine-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  margin: 0;
+  padding: 9px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary);
+  font-size: 13px;
+  font-weight: 760;
+}
+
+.vaccine-option input {
+  width: 16px;
+  min-height: 16px;
+  accent-color: var(--primary-dark);
+}
+
+.button-row {
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.button-row.tight {
+  justify-content: flex-end;
+}
+
+.status-pill {
+  color: var(--yellow);
+  background: var(--yellow-bg);
+}
+
+.status-pill.ok {
+  color: var(--primary-dark);
+  background: var(--primary-bg);
+}
+
+.status-pill.warning {
+  color: var(--yellow);
+  background: var(--yellow-bg);
+}
+
+.hidden {
+  display: none !important;
+}
+
+.mode-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  color: var(--text-primary);
+  background: var(--yellow-bg);
+  border: 1px solid var(--yellow-border);
+  border-radius: var(--radius-md);
+}
+
+.mode-banner p {
+  margin-bottom: 0;
+  color: var(--text-secondary);
+}
+
+.mode-banner button {
+  margin-left: auto;
+}
+
+.public-demo-banner {
+  background: var(--red-bg);
+  border-color: var(--red-border);
+}
+
+body[data-runtime-mode="public-demo"] input:disabled,
+body[data-runtime-mode="public-demo"] select:disabled,
+body[data-runtime-mode="public-demo"] textarea:disabled {
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+  opacity: 1;
+}
+
+.node-settings-card {
+  display: grid;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-3);
+  background: var(--bg-glass);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--card-glass-border);
+  border-radius: var(--radius-md);
+}
+
+.configuration-window {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+.config-status-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.status-tile {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+  padding: var(--space-3);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.status-tile span {
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  text-transform: uppercase;
+}
+
+.status-tile strong {
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.config-section {
+  padding: var(--space-4);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.config-section .panel-heading {
+  margin-bottom: var(--space-3);
+}
+
+.config-section .node-settings-card {
+  grid-template-columns: minmax(180px, 1fr) minmax(180px, 1fr);
+  align-items: end;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  backdrop-filter: none;
+}
+
+/* Save button is a global form action, not paired with COUNTRY/OPERATOR.
+   Force it to span the full row so it sits visually below all the inputs
+   instead of looking like the second cell of the country+operator row. */
+.config-section .node-settings-card #save-node-settings {
+  grid-column: 1 / -1;
+  justify-self: start;
+  align-self: stretch;
+  margin-top: var(--space-2);
+  padding: 0 var(--space-4);
+  min-width: 200px;
+}
+
+.preference-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.preference-item {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.preference-item > span {
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  text-transform: uppercase;
+}
+
+.node-settings-card label {
+  margin-bottom: 0;
+}
+
+.mini-row {
+  display: grid;
+  grid-template-columns: 0.72fr 1fr;
+  gap: var(--space-2);
+}
+
+.field-help {
+  margin: -4px 0 var(--space-3);
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  line-height: 1.45;
+}
+
+/* Confidence help rendered as a 3-line list (low/medium/high). The i18n
+   string contains literal newlines; preserve them so each level reads on
+   its own line instead of running together as a single dense paragraph. */
+.confidence-help {
+  white-space: pre-line;
+  padding-left: var(--space-3);
+  border-left: 2px solid var(--border-light);
+}
+
+/* Inline field hint shown directly under a small input (e.g. Country
+   ISO code). Smaller and tighter than .field-help because it sits inside
+   the same label as its input. */
+.field-hint {
+  display: block;
+  margin-top: 4px;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: var(--weight-medium);
+}
+
+.privacy-checklist {
+  margin-bottom: var(--space-3);
+  padding: var(--space-3);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.privacy-checklist:empty {
+  display: none;
+}
+
+.privacy-checklist ul {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+  margin: 0 0 var(--space-3);
+  padding: 0;
+  list-style: none;
+}
+
+.privacy-checklist li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: var(--text-xs);
+  overflow-wrap: anywhere;
+}
+
+.privacy-checklist li strong {
+  flex: 0 0 auto;
+  color: var(--green);
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.privacy-checklist li.danger strong {
+  color: var(--red);
+}
+
+.export-ready-note {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: var(--space-3) 0 0;
+  color: var(--green);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+}
+
+.privacy-checklist li.ok {
+  border-color: var(--green-border);
+}
+
+.privacy-checklist li.danger {
+  border-color: var(--red-border);
+}
+
+.chip-list,
+.limit-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.limit-list span {
+  padding: var(--space-2) var(--space-3);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+}
+
+.audit-grid {
+  margin-top: var(--space-3);
+}
+
+.mobile-climate-details > summary {
+  display: none;
+}
+
+.result-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.result-grid article {
+  min-width: 0;
+}
+
+.result-card {
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast),
+    background var(--transition-fast);
+}
+
+.result-card h3 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.result-alert {
+  display: inline-flex;
+  color: var(--red);
+}
+
+.result-card.result-warning {
+  border-color: var(--yellow-border);
+  background: linear-gradient(180deg, var(--yellow-bg), var(--bg-card) 70%);
+}
+
+.result-card.result-critical {
+  border-color: var(--red-border);
+  background: linear-gradient(180deg, var(--red-bg), var(--bg-card) 68%);
+  box-shadow: 0 0 0 1px var(--red-border), 0 18px 36px -28px var(--red);
+  animation: critical-card-pulse 1.6s ease-in-out 1;
+}
+
+.result-card.result-critical .muted-box {
+  border-color: var(--red-border);
+}
+
+.muted-box,
+.history-row,
+.signal-summary {
+  padding: 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.metric-list {
+  display: grid;
+  gap: 8px;
+}
+
+.metric-row,
+.fact-row,
+.history-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.metric-row,
+.fact-row {
+  min-height: 42px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.metric-row:last-child,
+.fact-row:last-child {
+  border-bottom: 0;
+}
+
+.metric-row small {
+  color: var(--text-muted);
+}
+
+.chip.ok {
+  color: var(--green);
+  background: var(--green-bg);
+  border: 1px solid var(--green-border);
+}
+
+.chip.warning {
+  color: var(--yellow);
+  background: var(--yellow-bg);
+  border: 1px solid var(--yellow-border);
+}
+
+.chip.danger {
+  color: var(--red);
+  background: var(--red-bg);
+  border: 1px solid var(--red-border);
+}
+
+.history-list {
+  display: grid;
+  gap: 10px;
+}
+
+.empty-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 0 var(--space-3);
+  color: var(--primary-dark);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  text-decoration: none;
+}
+
+.audit-toggle {
+  width: fit-content;
+  justify-self: center;
+  min-height: 36px;
+  margin-top: var(--space-1);
+  padding: 0 var(--space-3);
+  color: var(--primary-dark);
+  font-size: var(--text-sm);
+}
+
+.history-row {
+  align-items: flex-start;
+}
+
+.history-row strong {
+  display: block;
+}
+
+.history-row small {
+  color: var(--text-muted);
+}
+
+.signal-summary {
+  display: grid;
+  /* Auto-fit cells with a minimum width that fits the longest expected
+     value ("Synthetic walkthrough", ~140-160px). Previously a fixed
+     4-column grid forced narrow ~80px cells that broke long values
+     mid-word ("Synthet/ic walkth/rough"), which read as a CSS bug to
+     reviewers. minmax(140px, 1fr) lets each cell hold its full word. */
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+/* Hide the summary container while it has no children. It shares
+   padding/background/border with .muted-box (rule below), so an empty
+   #weekly-summary div would render as an unexplained grey rectangle
+   under the "Save weekly input" button. The :empty pseudo only matches
+   when the element has zero child nodes including text — JS clears it
+   to "" so this works. */
+.signal-summary:empty {
+  display: none;
+  padding: 0;
+  border: 0;
+  margin: 0;
+}
+
+.signal-summary > div {
+  min-width: 0;
+  padding: 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.signal-summary span {
+  display: block;
+  color: var(--text-muted);
+}
+
+.signal-summary strong {
+  display: block;
+  /* `break-word` wraps at word boundaries first and only breaks mid-word
+     when there is no other choice. The previous `anywhere` value broke
+     "Synthetic walkthrough" into "Synthet/ic walkth/rough" inside the
+     narrow 4-column grid cells. */
+  overflow-wrap: break-word;
+  word-break: normal;
+  hyphens: auto;
+  margin-top: 5px;
+  font-size: 18px;
+  line-height: 1.25;
+}
+
+.sparkline-card {
+  grid-column: 1 / -1;
+  border-color: var(--border-strong);
+}
+
+.sparkline-card.danger {
+  border-color: var(--red-border);
+  background: linear-gradient(180deg, var(--red-bg), var(--bg-card) 72%);
+}
+
+.sparkline-card.warning {
+  border-color: var(--yellow-border);
+  background: linear-gradient(180deg, var(--yellow-bg), var(--bg-card) 72%);
+}
+
+.sparkline-heading,
+.sparkline-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.sparkline-heading strong {
+  margin-top: 3px;
+  font-size: var(--text-lg);
+}
+
+.signal-sparkline {
+  width: 100%;
+  height: 160px;
+  margin-top: var(--space-2);
+  overflow: visible;
+}
+
+.sparkline-axis {
+  stroke: var(--border-strong);
+  stroke-width: 1;
+}
+
+/* Horizontal grid lines tied to the 3 Y-axis ticks (min · mean · max).
+   Subtle so they don't compete with the data, but present so the reviewer
+   has a scale instead of a free-floating curve. */
+.sparkline-grid {
+  stroke: var(--border-light);
+  stroke-width: 1;
+  stroke-dasharray: 2 4;
+  opacity: 0.7;
+}
+
+.sparkline-tick-label {
+  fill: var(--text-muted);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Dashed line at baseline mean — the threshold the spike is being
+   measured against. Severity-tinted so the reviewer reads
+   "current is well above baseline" without doing arithmetic. */
+.sparkline-mean {
+  stroke: var(--text-muted);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 4;
+  opacity: 0.85;
+}
+
+.sparkline-mean-label {
+  fill: var(--text-muted);
+  font-size: 10px;
+  font-style: italic;
+}
+
+.sparkline-card.warning .sparkline-mean,
+.sparkline-card.danger .sparkline-mean {
+  stroke: var(--text-secondary);
+}
+
+.sparkline-zone {
+  display: block;
+  margin-top: 2px;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: var(--weight-medium);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.sparkline-baseline {
+  fill: none;
+  stroke: var(--text-muted);
+  stroke-width: 2;
+  opacity: 0.75;
+}
+
+.sparkline-current {
+  fill: none;
+  stroke: var(--primary-dark);
+  stroke-width: 3;
+}
+
+.sparkline-card.warning .sparkline-current {
+  stroke: var(--yellow);
+}
+
+.sparkline-card.danger .sparkline-current {
+  stroke: var(--red);
+}
+
+.sparkline-dot {
+  fill: var(--bg-card);
+  stroke: var(--text-muted);
+  stroke-width: 2;
+}
+
+.sparkline-dot.current {
+  fill: var(--bg-card);
+  stroke: var(--primary-dark);
+  stroke-width: 3;
+}
+
+.sparkline-card.danger .sparkline-dot.current {
+  stroke: var(--red);
+}
+
+.sparkline-label {
+  fill: var(--text-primary);
+  font-size: 12px;
+  font-weight: var(--weight-bold);
+  text-anchor: middle;
+}
+
+.sparkline-meta {
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+}
+
+.export-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+.export-actions > strong {
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+}
+
+.json-preview {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary);
+  overflow: hidden;
+}
+
+/* ── AI surveillance brief panel ──
+   Sits below the export readiness panel, on the surveillance view.
+   Reads from /api/brief/generate which calls the safe-payload chokepoint
+   in brief.py — no PHI ever reaches this panel. */
+.brief-grid {
+  margin-top: var(--space-3);
+  grid-template-columns: 1fr;
+}
+
+.brief-empty {
+  padding: var(--space-5);
+  text-align: center;
+}
+
+.brief-output {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.brief-output.hidden {
+  display: none;
+}
+
+.brief-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border);
+}
+
+.brief-header h3 {
+  margin: 0;
+  font-size: var(--text-lg);
+  color: var(--text-primary);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.brief-generator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: var(--weight-semibold);
+}
+
+.brief-section {
+  display: grid;
+  gap: 4px;
+}
+
+.brief-section h4 {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.brief-section p {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+}
+
+.brief-section ul {
+  margin: 0;
+  padding-left: var(--space-4);
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+}
+
+.brief-section ul li {
+  margin-bottom: 4px;
+}
+
+.brief-disclaimer {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--primary-bg);
+  border: 1px solid var(--primary-border);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: var(--text-xs);
+  line-height: 1.5;
+}
+
+.brief-disclaimer .icon {
+  color: var(--primary-dark);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.json-preview summary {
+  padding: var(--space-3);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  cursor: pointer;
+}
+
+.json-preview[open] summary {
+  border-bottom: 1px solid var(--border);
+}
+
+pre {
+  overflow: auto;
+  min-height: 176px;
+  margin: 0;
+  padding: 14px;
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-size: 12px;
+}
+
+footer {
+  padding: 12px 0 0;
+  text-align: center;
+  font-size: 13px;
+}
+
+@media (max-width: 1180px) {
+  .app-frame {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: static;
+    height: auto;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+    gap: 14px;
+    padding: 14px;
+  }
+
+  .sidebar-nav {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(132px, 1fr));
+    gap: 8px;
+  }
+
+  .sidebar-note,
+  .sidebar-group-title {
+    display: none;
+  }
+
+  .sidebar-link {
+    min-width: 0;
+  }
+}
+
+/* ── Hamburger toggle (mobile only) ──
+   Hidden on desktop, visible at the breakpoint where the sidebar drawer
+   takes over. Three-bar metaphor; transitions to an X when open. */
+.mobile-nav-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  width: 42px;
+  padding: 0;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+}
+
+.mobile-nav-toggle:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--primary-border);
+}
+
+.hamburger-bars {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 18px;
+  height: 14px;
+}
+
+.hamburger-bars span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: currentColor;
+  border-radius: 2px;
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
+  transform-origin: center;
+}
+
+.app-frame[data-mobile-nav="open"] .hamburger-bars span:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+
+.app-frame[data-mobile-nav="open"] .hamburger-bars span:nth-child(2) {
+  opacity: 0;
+}
+
+.app-frame[data-mobile-nav="open"] .hamburger-bars span:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+.topbar-title {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* ── Mobile nav backdrop (drawer scrim) ──
+   Hidden on desktop. On mobile it sits between the sidebar drawer and
+   the page content; clicking it closes the drawer. */
+.mobile-nav-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: var(--scrim-bg);
+  z-index: var(--z-modal);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-normal);
+}
+
+.app-frame[data-mobile-nav="open"] .mobile-nav-backdrop {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+@media (max-width: 980px) {
+  .topbar,
+  .hero-card,
+  .boundary-strip,
+  .panel-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .hero-status {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .app-shell {
+    width: min(100% - 28px, 760px);
+  }
+
+  /* Mobile: drawer instead of sticky 264px column.
+     The .app-frame becomes a single column; the sidebar is a fixed-position
+     drawer that slides in from the left when [data-mobile-nav="open"]. */
+  .app-frame {
+    grid-template-columns: 1fr;
+  }
+
+  .mobile-nav-toggle {
+    display: inline-flex;
+  }
+
+  .mobile-nav-backdrop {
+    display: block;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: min(86vw, 320px);
+    height: 100vh;
+    height: 100dvh;
+    z-index: calc(var(--z-modal) + 1);
+    transform: translateX(-100%);
+    transition: transform var(--transition-slow);
+    overflow-y: auto;
+  }
+
+  .app-frame[data-mobile-nav="open"] .sidebar {
+    transform: translateX(0);
+    box-shadow: var(--shadow-lg);
+  }
+
+  /* When the drawer is open we lock scroll so the body content doesn't
+     bleed through under the scrim. The body padding from safe-area stays. */
+  .app-frame[data-mobile-nav="open"] {
+    overflow: hidden;
+    height: 100vh;
+  }
+
+  .sidebar-brand {
+    justify-content: flex-start;
+  }
+
+  .sidebar-nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .workspace,
+  .bottom-grid,
+  .result-grid,
+  .signal-summary,
+  .context-bar,
+  .preference-grid,
+  .config-status-grid,
+  .field-grid,
+  .field-grid.compact,
+  .config-section .node-settings-card,
+  .mini-row,
+  .privacy-checklist ul,
+  .vaccine-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .button-row.tight {
+    justify-content: flex-start;
+  }
+
+  .context-bar {
+    position: static;
+  }
+
+  .export-actions,
+  .sparkline-heading,
+  .sparkline-meta {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  h1 {
+    font-size: 34px;
+  }
+
+  .hero-copy h2 {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 760px) {
+  html,
+  body {
+    overflow-x: hidden;
+  }
+
+  body {
+    padding-bottom: calc(78px + var(--safe-area-bottom));
+    background: var(--bg-primary);
+  }
+
+  .app-shell {
+    width: 100%;
+    padding: 12px 12px calc(96px + var(--safe-area-bottom));
+  }
+
+  /* Mobile primary nav is the tabbar at the bottom + Configuration page,
+     so the hamburger, settings icon and theme toggle are intentionally
+     hidden in the topbar — they would duplicate the tabbar. We KEEP the
+     language switch visible because it's a high-frequency interaction
+     for bilingual reviewers and would otherwise be buried in Config. */
+  .sidebar,
+  .mobile-nav-backdrop,
+  .mobile-nav-toggle,
+  #open-config,
+  #theme-toggle,
+  .hero-card,
+  .boundary-strip {
+    display: none;
+  }
+
+  .app-frame {
+    display: block;
+    min-height: 100dvh;
+  }
+
+  .topbar {
+    position: sticky;
+    top: var(--safe-area-top);
+    z-index: 12;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-2);
+    margin: -12px -12px 8px;
+    padding: 10px 12px;
+    background: color-mix(in srgb, var(--bg-card) 94%, transparent);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(14px);
+  }
+
+  .topbar-title {
+    flex: 1 1 auto;
+    min-width: 0;
+    gap: var(--space-2);
+  }
+
+  .topbar-title > div {
+    min-width: 0;
+  }
+
+  .topbar .eyebrow {
+    margin-bottom: 2px;
+    font-size: 10px;
+  }
+
+  h1 {
+    max-width: none;
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+    font-size: 20px;
+    line-height: 1.05;
+  }
+
+  .top-actions {
+    flex: 0 0 auto;
+    padding: 0;
+    gap: 6px;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+  }
+
+  .top-actions .status-pill {
+    min-height: 28px;
+    padding: 4px 9px;
+    font-size: 10px;
+  }
+
+  .top-actions #current-week-pill {
+    display: none;
+  }
+
+  /* Compact lang switch for mobile — tighter than desktop. Keeps EN/ES
+     reachable from the topbar without taking the full pill width. */
+  .top-actions .lang-group {
+    padding: 1px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+  }
+
+  .top-actions .lang {
+    min-width: 32px;
+    min-height: 26px;
+    height: 26px;
+    padding: 0 6px;
+    font-size: 11px;
+  }
+
+  .mode-banner {
+    align-items: flex-start;
+    gap: var(--space-2);
+    margin-bottom: 8px;
+    padding: 10px 12px;
+  }
+
+  .mode-banner p {
+    display: none;
+  }
+
+  .mode-banner button {
+    width: 100%;
+    margin: 4px 0 0;
+    min-height: 36px;
+  }
+
+  .mobile-boundary-strip {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: 8px;
+    padding: 9px 11px;
+    color: var(--primary-dark);
+    background: var(--primary-bg);
+    border: 1px solid var(--primary-border);
+    border-radius: var(--radius-md);
+    font-size: var(--text-xs);
+  }
+
+  .mobile-boundary-strip strong {
+    line-height: 1.25;
+  }
+
+  .context-bar {
+    position: sticky;
+    top: 58px;
+    z-index: 9;
+    display: block;
+    margin-bottom: 8px;
+    padding: 10px 12px;
+  }
+
+  .context-item {
+    display: none;
+  }
+
+  .context-mobile-summary {
+    display: grid;
+    gap: 3px;
+    min-width: 0;
+  }
+
+  .context-mobile-summary strong,
+  .context-mobile-summary span {
+    display: block;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .context-mobile-summary strong {
+    color: var(--text-primary);
+    font-size: var(--text-sm);
+  }
+
+  .context-mobile-summary span {
+    color: var(--text-muted);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-semibold);
+  }
+
+  .page-header {
+    margin-bottom: 8px;
+    padding: 12px;
+    border-radius: var(--radius-md);
+  }
+
+  .page-header h2 {
+    font-size: var(--text-xl);
+  }
+
+  .page-header p:last-child {
+    font-size: var(--text-sm);
+  }
+
+  .workspace,
+  .bottom-grid,
+  .records-grid,
+  .surveillance-export-grid {
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .panel {
+    padding: 14px;
+    border-radius: var(--radius-md);
+  }
+
+  .panel-heading {
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .panel-heading h2 {
+    font-size: var(--text-lg);
+  }
+
+  .panel-heading p {
+    font-size: var(--text-sm);
+  }
+
+  .intake-panel {
+    scroll-margin-top: 104px;
+  }
+
+  .intake-panel .panel-heading {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  #load-synthetic,
+  .button-row button {
+    width: 100%;
+  }
+
+  .field-grid,
+  .field-grid.compact {
+    gap: 8px;
+  }
+
+  label {
+    margin-bottom: 9px;
+  }
+
+  input,
+  select,
+  textarea {
+    min-height: 40px;
+    padding: 8px 10px;
+  }
+
+  .clinical-context-field {
+    margin-top: var(--space-3);
+  }
+
+  .results-panel {
+    min-height: auto;
+  }
+
+  .result-grid {
+    gap: 10px;
+  }
+
+  .muted-box,
+  .history-row,
+  .signal-summary {
+    padding: 10px;
+  }
+
+  .surveillance-export-grid {
+    margin-top: 0;
+  }
+
+  #aggregate-panel {
+    order: -1;
+  }
+
+  #aggregate-panel .panel-heading .button-row {
+    width: 100%;
+  }
+
+  #aggregate-summary.signal-summary {
+    grid-template-columns: 1fr;
+  }
+
+  #weekly-summary.signal-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  #weekly-summary.signal-summary > div {
+    padding: 8px;
+  }
+
+  #weekly-summary.signal-summary strong {
+    font-size: var(--text-sm);
+  }
+
+  .sparkline-card {
+    padding: 10px;
+  }
+
+  .signal-sparkline {
+    height: 118px;
+  }
+
+  .sparkline-meta {
+    gap: 3px;
+  }
+
+  .mobile-climate-details > summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    min-height: 44px;
+    padding: 0;
+    color: var(--text-primary);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-bold);
+    list-style: none;
+    cursor: pointer;
+  }
+
+  .mobile-climate-details > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .mobile-climate-details > summary::after {
+    content: "⌄";
+    color: var(--text-muted);
+    font-size: 18px;
+    transition: transform var(--transition-fast);
+  }
+
+  .mobile-climate-details[open] > summary::after {
+    transform: rotate(180deg);
+  }
+
+  .mobile-climate-details .climate-heading {
+    display: none;
+  }
+
+  .mobile-climate-details[open] #climate-form {
+    margin-top: var(--space-3);
+  }
+
+  .privacy-checklist {
+    padding: 10px;
+  }
+
+  .privacy-checklist ul {
+    gap: 7px;
+  }
+
+  .privacy-checklist li {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .export-actions {
+    align-items: stretch;
+  }
+
+  .export-actions .button-row {
+    width: 100%;
+  }
+
+  .json-preview pre,
+  pre {
+    max-height: 260px;
+  }
+
+  .history-list {
+    gap: 8px;
+  }
+
+  .history-row {
+    gap: 8px;
+  }
+
+  /* The base .chip uses display: inline-flex so it can hold an icon next
+     to text. inline-flex disables text-overflow: ellipsis on the chip
+     itself — the text just gets clipped without the "..." indicator.
+     We override to inline-block here because the audit chip is text-only
+     and the ellipsis matters more than icon support. */
+  .history-row .chip {
+    display: inline-block;
+    flex: 0 0 auto;
+    max-width: 120px;
+    padding: 5px 9px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 10px;
+    line-height: 1.4;
+    text-align: center;
+  }
+
+  .audit-toggle {
+    width: 100%;
+  }
+
+  .configuration-window {
+    gap: 10px;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .config-section {
+    padding: 14px;
+  }
+
+  .preference-grid,
+  .config-status-grid {
+    gap: 8px;
+  }
+
+  .status-tile {
+    padding: 10px;
+  }
+
+  footer {
+    padding-bottom: var(--space-3);
+  }
+
+  .mobile-tabbar {
+    position: fixed;
+    left: calc(10px + var(--safe-area-left));
+    right: calc(10px + var(--safe-area-right));
+    bottom: calc(10px + var(--safe-area-bottom));
+    z-index: var(--z-sticky);
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 4px;
+    padding: 6px;
+    background: color-mix(in srgb, var(--bg-card) 94%, transparent);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    box-shadow: var(--shadow-lg);
+    backdrop-filter: blur(16px);
+  }
+
+  .mobile-tabbar a {
+    display: grid;
+    place-items: center;
+    gap: 3px;
+    min-width: 0;
+    min-height: 52px;
+    color: var(--text-muted);
+    border: 1px solid transparent;
+    border-radius: 15px;
+    text-decoration: none;
+    transition: var(--transition-fast);
+  }
+
+  .mobile-tabbar a.active {
+    color: var(--primary-dark);
+    background: var(--primary-bg);
+    border-color: var(--primary-border);
+  }
+
+  .mobile-tabbar strong {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 11px;
+    line-height: 1;
+  }
+
+  .toast-region {
+    left: calc(12px + var(--safe-area-left));
+    right: calc(12px + var(--safe-area-right));
+    bottom: calc(86px + var(--safe-area-bottom));
+    max-width: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .sidebar-nav {
+    grid-template-columns: 1fr;
+  }
+
+  .topbar {
+    margin-bottom: 14px;
+  }
+
+  .hero-card,
+  .panel {
+    padding: 18px;
+  }
+}
+
+/* ── Button icon prefix ──
+   When a button wraps an inline icon span next to its label, give them
+   breathing room and align baseline. Works for both primary and secondary
+   variants because we target descendant icons, not button colour. */
+button .icon,
+button > span.icon {
+  margin-right: 6px;
+}
+
+button > span:not(.icon):first-child + span {
+  margin-left: 4px;
+}
+
+button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: var(--shadow-sm);
+}
+
+button.loading {
+  cursor: progress;
+  pointer-events: none;
+}
+
+button.loading .icon {
+  animation: spinner-rotate 0.9s linear infinite;
+}
+
+/* ── Status pill (Waiting / Computed / Saved) ──
+   The assessment-status pill on the results panel header. Shows a Lucide
+   loader while the JS fetch is in flight (.status-pill.loading) and a
+   green check on success (.status-pill.ok). */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-secondary);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+.status-pill::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.status-pill.loading::before {
+  background: var(--yellow);
+  animation: pulse-dot 1.2s ease-in-out infinite;
+}
+
+.status-pill.ok::before {
+  background: var(--primary);
+}
+
+.status-pill.error {
+  color: var(--red);
+  background: var(--red-bg);
+  border-color: var(--red-border);
+}
+
+.status-pill.error::before {
+  background: var(--red);
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 0.4; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+@keyframes spinner-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes critical-card-pulse {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--red) 28%, transparent); }
+  100% { box-shadow: 0 0 0 10px transparent; }
+}
+
+/* ── Toast region ──
+   Bottom-right toast that auto-dismisses. We use a single live region so
+   the screen reader announces only the latest message.
+
+   The previous bottom value (~24px) overlapped the last row of the audit
+   list when the user landed on the Records page right after preparing an
+   export — the toast obscured the timestamp of the most recent event.
+   Lift it to ~88px to clear common bottom-aligned panel content; the
+   mobile-tabbar override below keeps it above that bar on small screens. */
+.toast-region {
+  position: fixed;
+  bottom: calc(88px + var(--safe-area-bottom));
+  right: calc(var(--space-6) + var(--safe-area-right));
+  z-index: var(--z-toast);
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-width: min(360px, calc(100vw - 2 * var(--space-4)));
+}
+
+.toast {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 12px 16px;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--primary);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  pointer-events: auto;
+  animation: toast-in var(--transition-normal) ease both;
+}
+
+.toast.toast-error {
+  border-left-color: var(--red);
+}
+
+.toast.toast-leaving {
+  animation: toast-out var(--transition-fast) ease forwards;
+}
+
+.toast .icon {
+  color: var(--primary);
+}
+
+.toast.toast-error .icon {
+  color: var(--red);
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes toast-out {
+  to {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .status-pill.loading::before { animation: none; }
+  .toast { animation: none; }
+  .toast.toast-leaving { animation: none; opacity: 0; }
+  button.loading .icon { animation: none; }
+  .result-card.result-critical { animation: none; }
+}
+
+/* ── Empty/error states for result panels ──
+   Replaces the silent "Waiting" with structured visual cues. Used by JS
+   when the encounter list is empty or an API call fails at startup. */
+.empty-state,
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 92px;
+  padding: var(--space-4);
+  text-align: center;
+  color: var(--text-muted);
+  background: var(--bg-secondary);
+  border: 1px dashed var(--border-light);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+}
+
+.error-state {
+  color: var(--red);
+  background: var(--red-bg);
+  border-color: var(--red-border);
+  border-style: solid;
+}
+
+.empty-state .icon,
+.error-state .icon {
+  width: 22px;
+  height: 22px;
+  opacity: 0.7;
+}
+
+.empty-state span {
+  font-weight: var(--weight-medium);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.signal-summary .empty-state span {
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.error-state button {
+  min-height: 32px;
+  padding: 0 12px;
+  margin-top: var(--space-2);
+  font-size: var(--text-xs);
+}

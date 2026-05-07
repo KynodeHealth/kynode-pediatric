@@ -113,6 +113,32 @@ document.querySelectorAll(".lang").forEach((button) => {
   button.addEventListener("click", () => setLanguage(button.dataset.lang));
 });
 
+// ── Theme toggle (parity with the local-node app) ──
+// Shared storage key with the local-node and the bootstrap script so the
+// user's choice of theme persists across both surfaces. They are the same
+// brand and design system; dragging the preference between them is correct.
+const DEMO_THEME_KEY = "kynode-pediatric-theme";
+const themeToggle = document.getElementById("theme-toggle");
+if (themeToggle) {
+  themeToggle.addEventListener("click", () => {
+    const current = document.documentElement.getAttribute("data-theme") || "light";
+    const next = current === "dark" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", next);
+    try {
+      localStorage.setItem(DEMO_THEME_KEY, next);
+    } catch (_err) {
+      /* Ignore (private mode etc.) */
+    }
+  });
+}
+
+// Hydrate Lucide icon spans (theme toggle's sun/moon and any future data-icon
+// spans). Safe to call before fetch resolves; render() functions re-hydrate
+// later if they inject more icons.
+if (typeof window !== "undefined" && window.KynodeIcons) {
+  window.KynodeIcons.hydrateIcons();
+}
+
 fetch("data/demo-output.json")
   .then((response) => {
     if (!response.ok) throw new Error(`Demo payload failed to load: ${response.status}`);

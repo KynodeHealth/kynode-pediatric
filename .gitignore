@@ -12,6 +12,11 @@ htmlcov/
 venv/
 env/
 *.egg
+*.sqlite
+*.sqlite3
+*.sqlite3-*
+*.db
+*.db-*
 
 # Node
 node_modules/
@@ -41,3 +46,7 @@ Thumbs.db
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Local screenshot snapshots used during development; never shipped
+.audit-screenshots/
+.audit-screenshots-*/

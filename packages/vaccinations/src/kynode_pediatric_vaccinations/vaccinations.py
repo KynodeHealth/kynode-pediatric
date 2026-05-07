@@ -92,7 +92,7 @@ def get_vaccination_status(
     if country_key not in schedules:
         raise ValueError(f"unsupported country schedule: {country}")
 
-    born_on = _parse_date(birth_date, field_name="birth_date")
+    born_on = _parse_required_date(birth_date, field_name="birth_date")
     ref_date = _parse_date(reference_date, field_name="reference_date")
     if ref_date < born_on:
         raise ValueError("reference_date cannot be before birth_date")

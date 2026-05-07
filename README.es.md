@@ -2,7 +2,11 @@
 
 [![CI](https://github.com/KynodeHealth/kynode-pediatric/actions/workflows/ci.yml/badge.svg)](https://github.com/KynodeHealth/kynode-pediatric/actions/workflows/ci.yml)
 [![Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/KynodeHealth/kynode-pediatric/main/badges/coverage.json)](https://github.com/KynodeHealth/kynode-pediatric/actions/workflows/ci.yml)
-[![Demo](https://img.shields.io/badge/demo-GitHub%20Pages-0f766e)](https://kynodehealth.github.io/kynode-pediatric/)
+[![Local Node en vivo](https://img.shields.io/badge/en%20vivo-pediatric.kynode.io-10b981)](https://pediatric.kynode.io/)
+[![Demo estático](https://img.shields.io/badge/demo-GitHub%20Pages-0f766e)](https://kynodehealth.github.io/kynode-pediatric/)
+[![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.12%2B-3776ab.svg)](apps/local-node/pyproject.toml)
+[![Status](https://img.shields.io/badge/status-pre--pilot%20alpha-d97706.svg)](#en-qué-etapa-está)
 
 [English](README.md) · [Español](README.es.md)
 
@@ -36,13 +40,64 @@ Este alpha convierte esas piezas en paquetes standalone bajo Apache 2.0 (`growth
 
 Decidimos abrir la capa pediátrica específicamente porque la población a la que sirve tiene el caso más fuerte para acceso libre. El resto del platform KYNODE (nube, sync, pipeline de inferencia, integración de hardware) sigue siendo propietario.
 
+## Cómo encaja con DHIS2, OpenMRS y otras herramientas existentes
+
+No estamos intentando reemplazar a DHIS2, OpenMRS, CommCare ni CHT. Esas herramientas son excelentes y se usan ampliamente.
+
+KYNODE Pediátrico es para el caso que esas herramientas peor manejan: clínicas que pasan semanas sin internet, sin un servidor central al alcance, donde los datos tienen que vivir y ser útiles enteramente dentro de una computadora pequeña en la propia clínica, y donde la señal de vigilancia aún tiene que llegar río arriba cuando la clínica eventualmente reconecta.
+
+En la práctica, KYNODE Pediátrico y esas herramientas pueden coexistir. La señal agregada semanal que produce el paquete `anomaly-detection` puede exportarse a una instancia de DHIS2, enviarse a un dashboard de OpenMRS o empujarse a lo que la autoridad sanitaria local ya use. Nos vemos como la capa de input offline-first hacia cualquier sistema que consuma la señal río arriba.
+
 ## En qué etapa está
 
-Alpha pre-piloto. A mayo de 2026 este repositorio contiene cuatro paquetes pediátricos instalables y offline-ready (`growth-curves`, `triage-ranges`, `anomaly-detection` y `vaccinations`), un demo bilingüe que consume JSON generado por esos paquetes, y documentación de arquitectura y roadmap.
+Alpha pre-piloto. A mayo de 2026 este repositorio contiene cuatro paquetes pediátricos instalables y offline-ready (`growth-curves`, `triage-ranges`, `anomaly-detection` y `vaccinations`), un demo estático bilingüe y una superficie de producto Local Node bajo `apps/local-node/`.
 
 Es un prototipo open-source funcional para revisión, evaluación de grant y colaboración técnica. No es software clínico validado en campo, no cubre todo el alcance OMS IMCI y no es un bundle de despliegue de extremo a extremo.
 
-## Demo
+## Local Node MVP
+
+La superficie de producto pre-piloto actual es un nodo clínico local, no solo un demo estático. Captura un encuentro pediátrico ingresado manualmente, corre los cuatro paquetes localmente, guarda el encuentro en SQLite, registra vigilancia semanal, registra contexto climático semanal y prepara solo JSON agregado por zona.
+
+Revisión pública del producto: [pediatric.kynode.io](https://pediatric.kynode.io/) corre en **modo demo público**. Usa únicamente datos sintéticos y no debe usarse con datos reales de pacientes. Para datos clínicos reales, corre el Local Node localmente como se muestra abajo.
+
+<table>
+<tr>
+<td width="68%" valign="top">
+
+![Vista de escritorio del Local Node](docs/assets/local-node-desktop.png)
+
+<sub>Escritorio · navegación de flujo, evaluación local, vigilancia semanal, contexto climático, checklist de privacidad y exportación agregada.</sub>
+
+</td>
+<td width="32%" valign="top">
+
+![Vista mobile del Local Node](docs/assets/local-node-mobile.png)
+
+<sub>Móvil · mismos datos, navegación inferior, flujo de tarea en una columna y manejo de viewport dinámico para iOS Safari.</sub>
+
+</td>
+</tr>
+</table>
+
+Para correrlo:
+
+```bash
+python3 -m pip install -e packages/growth-curves
+python3 -m pip install -e packages/triage-ranges
+python3 -m pip install -e packages/anomaly-detection
+python3 -m pip install -e packages/vaccinations
+python3 -m pip install -e apps/local-node
+
+python3 -m kynode_pediatric_local_node
+```
+
+Luego abre `http://localhost:8080`.
+
+Guía de usuario con capturas: [docs/user-guide/local-node.es.md](docs/user-guide/local-node.es.md) · [inglés](docs/user-guide/local-node.md)
+
+El Local Node es software pre-piloto. No está validado en campo, no hace diagnóstico autónomo, no usa API meteorológica y todavía no incluye sync de producción, roles, IMCI completo ni adaptadores institucionales.
+
+## Demo estático
 
 El demo usa un caso pediátrico sintético y corre por los cuatro paquetes alpha.
 
@@ -58,24 +113,28 @@ Demo público: [kynodehealth.github.io/kynode-pediatric](https://kynodehealth.gi
 - Los umbrales de anomalías son valores iniciales transparentes, no umbrales calibrados con datos de campo.
 - El paquete de signos de alarma IMCI no está incluido en este alpha.
 
+## Licencia
+
+Apache 2.0. Ver [LICENSE](LICENSE).
+
 ## Inicio rápido
 
 ```bash
 git clone https://github.com/<org>/kynode-pediatric
 cd kynode-pediatric
 
-pip install -e packages/growth-curves
-pip install -e packages/triage-ranges
-pip install -e packages/anomaly-detection
-pip install -e packages/vaccinations
+python3 -m pip install -e packages/growth-curves
+python3 -m pip install -e packages/triage-ranges
+python3 -m pip install -e packages/anomaly-detection
+python3 -m pip install -e packages/vaccinations
 
-pytest packages/growth-curves/tests
-pytest packages/triage-ranges/tests
-pytest packages/anomaly-detection/tests
-pytest packages/vaccinations/tests
+python3 -m pytest packages/growth-curves/tests
+python3 -m pytest packages/triage-ranges/tests
+python3 -m pytest packages/anomaly-detection/tests
+python3 -m pytest packages/vaccinations/tests
 
-python demo/generate_demo_data.py
-python -m http.server 8080 -d demo
+python3 demo/generate_demo_data.py
+python3 -m http.server 8080 -d demo
 ```
 
 Luego abre `http://localhost:8080`.
@@ -84,13 +143,27 @@ Entradas útiles:
 
 - [Architecture](docs/architecture.md) — cómo encaja el módulo dentro de KYNODE.
 - [Roadmap](ROADMAP.md) — qué existe, qué falta y qué financiaría el grant.
+- [Nota de producto Local Node](docs/product/local-node.md) — cómo funciona la superficie pre-piloto.
+- [Opcional · Capa de briefing con LLM local vía Ollama](docs/integrations/ollama.es.md) — IA edge opcional para el briefing de vigilancia, sin dependencia SaaS.
 - [Notas del alpha pre-grant](docs/releases/v0.1.0-pregrant-alpha.md) — cambios, verificación y límites conocidos.
 - [Changelog](CHANGELOG.md) — historial de releases y notas del alpha pendiente.
 - [Security policy](SECURITY.md) — cómo reportar temas de seguridad o privacidad.
 
+## Sistema de diseño
+
+El Local Node y el demo estático comparten un solo sistema de diseño: la misma fuente Inter Variable (autohospedada, offline-safe), el mismo `tokens.css` (temas claro + oscuro, ~135 design tokens), la misma librería de iconos Lucide y el mismo script de bootstrap de tema. Los archivos compartidos viven en `apps/local-node/src/kynode_pediatric_local_node/static/` y se vendoran en `demo/static/` para que el demo siga siendo autocontenido.
+
+Para propagar cambios desde la app hacia el demo:
+
+```bash
+bash scripts/sync-design-system.sh
+```
+
+Los tests en `tests/test_demo_design_system.py` exigen identidad byte-a-byte de los archivos vendoradas y cero colores hardcoded en el CSS del demo, de modo que cualquier deriva entre ambas superficies hace fallar CI.
+
 ## Por qué open source
 
-La atención de un niño no se decide por código cerrado. Se decide por si la herramienta llega o no llega a la clínica. El resto de KYNODE lo monetizamos; este pedazo lo devolvemos.
+La atención de un niño no se decide por código cerrado. Se decide por si la herramienta llega o no llega a la clínica. El resto de KYNODE se sostiene comercialmente; este módulo lo devolvemos.
 
 ## Quiénes estamos detrás
 
