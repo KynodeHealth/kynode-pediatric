@@ -35,6 +35,17 @@ User guide with screenshots: [../../docs/user-guide/local-node.md](../../docs/us
 
 The synthetic walkthrough is explicit. Clinic mode never loads synthetic data silently.
 
+## Public synthetic export API
+
+The hosted **Live synthetic aggregate export**, its fixed public scope and every
+response field are documented in
+[`docs/export-schema.md`](../../docs/export-schema.md). A reproducible hosted
+walkthrough is available in
+[`docs/demo-walkthrough.md`](../../docs/demo-walkthrough.md).
+
+The public endpoint is synthetic-only and aggregate-only. It is not evidence of
+current clinical activity, field validation or an outbreak.
+
 ## Privacy Boundary
 
 - Patient-level data stays on this device.

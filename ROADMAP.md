@@ -1,8 +1,10 @@
 # Roadmap
 
-## Where we are: May 2026
+## Where we are: July 2026
 
 The first four components are available as a pre-pilot alpha in May 2026 ahead of the [UNICEF Climate & Health 2026](https://www.unicef.org/innovation/call-for-application-climate-and-health-2026) application. This is enough to show the product thesis in code and in a demo, but it is not the full pediatric module yet. The fifth component (`imci-rules`) ships after the grant decision.
+
+The v0.2.1 evidence release publishes component-level coverage, the Public synthetic export API contract and a reproducible demo walkthrough without changing clinical logic or claiming field validation.
 
 ## Components
 
@@ -54,6 +56,8 @@ Each phase is gated by the same three engineering invariants:
 3. **Determinism for clinical decisions.** Generative models can summarise, narrate and translate. They never decide. The IMCI tree, the Z-score, the vital ranges and the anomaly detector stay deterministic.
 
 This is not a "we will sprinkle AI on top" plan. It is the staged plan to keep the entire intelligence stack inside the clinic.
+
+v0.2.1 is an evidence and documentation release. It does not replace or pull forward the v0.3 voice-to-structured-intake milestone.
 
 ## What we will not do
 
