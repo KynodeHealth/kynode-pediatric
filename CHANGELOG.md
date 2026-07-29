@@ -1,5 +1,28 @@
 # Changelog
 
+## v0.2.1 — 2026-07-28
+
+Pre-pilot evidence and export documentation.
+
+### Added
+
+- Machine-readable coverage evidence for each shipped component, the Local Node package and `brief.py`, generated from the same `coverage.py` report as the global badge.
+- Public CI guard that fails if the documented test count differs from 184.
+- Field-by-field documentation for the Public synthetic export API and its fixed public scope.
+- Five-step walkthrough for reproducing the hosted synthetic product flow.
+
+### Changed
+
+- README evidence now publishes 184 tests, component-level coverage and the 94% global result with explicit limits on what those figures prove.
+- Project status now describes field deployment preparation without claiming deployment, validation or institutional endorsement.
+- Roadmap identifies v0.2.1 as an evidence release and keeps offline voice reserved for v0.3.
+
+### Safety boundary
+
+- No clinical thresholds, assessment logic or patient-data handling changed in this release.
+- The Live synthetic aggregate export remains synthetic-only, aggregate-only and fixed-scope.
+- Field validation, production synchronization, institutional adapters and measured health outcomes remain out of scope.
+
 ## v0.2.0-prepilot-local-node — 2026-05-06
 
 Pre-pilot product release for the KYNODE Pediatric Local Node.

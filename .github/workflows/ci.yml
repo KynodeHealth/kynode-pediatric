@@ -38,6 +38,29 @@ jobs:
             -e packages/vaccinations \
             -e "apps/local-node[test]"
 
+      - name: Verify documented test count
+        run: |
+          python -m pytest --collect-only -q > collected-tests.txt
+          python - <<'PY'
+          import re
+          import sys
+          from pathlib import Path
+
+          output = Path("collected-tests.txt").read_text(encoding="utf-8")
+          match = re.search(r"(\d+) tests collected", output)
+          if match is None:
+              print("Could not determine the collected test count.", file=sys.stderr)
+              raise SystemExit(1)
+          count = int(match.group(1))
+          if count != 184:
+              print(
+                  f"Expected the documented baseline of 184 tests; collected {count}. "
+                  "Reconcile public documentation before merging.",
+                  file=sys.stderr,
+              )
+              raise SystemExit(1)
+          PY
+
       - name: Run tests with coverage gate
         run: |
           python -m pytest \
@@ -52,7 +75,12 @@ jobs:
             -q
 
       - name: Check coverage badge is current
-        run: python scripts/update_coverage_badge.py coverage.json badges/coverage.json --check
+        run: |
+          python scripts/update_coverage_badge.py \
+            coverage.json \
+            badges/coverage.json \
+            --components-json badges/coverage-components.json \
+            --check
 
       - name: Generate demo payload
         run: python demo/generate_demo_data.py

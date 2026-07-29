@@ -2,6 +2,7 @@
 
 [![CI](https://github.com/KynodeHealth/kynode-pediatric/actions/workflows/ci.yml/badge.svg)](https://github.com/KynodeHealth/kynode-pediatric/actions/workflows/ci.yml)
 [![Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/KynodeHealth/kynode-pediatric/main/badges/coverage.json)](https://github.com/KynodeHealth/kynode-pediatric/actions/workflows/ci.yml)
+[![Tests](https://img.shields.io/badge/tests-184%20passed-brightgreen.svg)](https://github.com/KynodeHealth/kynode-pediatric/actions/workflows/ci.yml)
 [![Live Local Node](https://img.shields.io/badge/live-pediatric.kynode.io-10b981)](https://pediatric.kynode.io/)
 [![Static Demo](https://img.shields.io/badge/demo-GitHub%20Pages-0f766e)](https://kynodehealth.github.io/kynode-pediatric/)
 [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
@@ -15,6 +16,24 @@ Open-source pediatric climate-health surveillance, built from the point of care.
 We are building this from the reality of clinics in Venezuela where intermittent connectivity is normal, not exceptional. KYNODE Pediatric runs on a small computer inside the clinic, works without internet, and turns the workflows nurses and community health workers already do every day - triage, growth measurement, vaccination, recognition of danger signs - into an early signal for climate-sensitive child health: dengue after heavy rains, diarrheal disease after flooding, heat-related illness during heat waves, respiratory outbreaks when air quality drops.
 
 The module sits on top of [KYNODE](https://kynode.io), a proprietary edge health information system that already runs in rural and semi-urban Venezuela. We are releasing the pediatric layer under Apache 2.0 because the population it serves — children under five in disconnected, climate-vulnerable settings — has a stronger case for free access than for revenue capture.
+
+## Public quality evidence
+
+The public CI collects **184 automated tests** and calculates every figure below from one `coverage.py` report. CI rejects the checked-in evidence if it drifts from the test run.
+
+| Tested component | Statement coverage |
+|---|---:|
+| `growth-curves` | 89% |
+| `triage-ranges` | 99% |
+| `anomaly-detection` | 82% |
+| `vaccinations` | 92% |
+| Local Node package | 95% |
+| `brief.py` | 97% |
+| **Global** | **94%** |
+
+Evidence: [machine-readable component manifest](badges/coverage-components.json) · [public CI runs](https://github.com/KynodeHealth/kynode-pediatric/actions/workflows/ci.yml).
+
+These figures describe automated engineering coverage. They do not represent field validation, clinical validation or measured health outcomes.
 
 ## How it works
 
@@ -50,7 +69,7 @@ In practice, KYNODE Pediatric and these tools can coexist. The aggregated weekly
 
 ## Status
 
-Pre-pilot alpha. As of May 2026, this repo contains four installable offline-ready pediatric packages (`growth-curves`, `triage-ranges`, `anomaly-detection` and `vaccinations`), a bilingual static demo, and a pre-pilot Local Node product surface under `apps/local-node/`.
+Pre-pilot alpha. As of July 2026, this repo contains four installable offline-ready pediatric packages (`growth-curves`, `triage-ranges`, `anomaly-detection` and `vaccinations`), a bilingual static demo, and a pre-pilot Local Node product surface under `apps/local-node/`. The current operational stage is **field deployment preparation**; no field deployment or validation is claimed by this repository.
 
 This is a working open-source prototype for review, grant evaluation and technical collaboration. It is not validated clinical field software, not the full WHO IMCI scope and not an end-to-end deployment bundle.
 
@@ -96,6 +115,20 @@ Then open `http://localhost:8080`.
 User guide with screenshots: [docs/user-guide/local-node.md](docs/user-guide/local-node.md) · [Spanish](docs/user-guide/local-node.es.md)
 
 The Local Node is pre-pilot software. It is not field validated, does not provide autonomous diagnosis, does not call a weather API, and does not include production sync, roles, full IMCI or institutional adapters yet.
+
+## Public synthetic export API
+
+The hosted Local Node exposes one fixed **Live synthetic aggregate export** for
+technical review. It accepts only the published synthetic zone, indicator and
+week, reports `signal_source: "synthetic_demo"` and must return
+`contains_phi: false`.
+
+- [Inspect the Live synthetic aggregate export](https://pediatric.kynode.io/api/export/weekly?zone=San%20Cristobal%20Norte&indicator=dengue_suspicion&week=2026-W19)
+- [Read the field-by-field export contract](docs/export-schema.md)
+- [Try the five-step synthetic walkthrough](docs/demo-walkthrough.md)
+
+This surface demonstrates the public contract and privacy boundary. It is not a
+feed of current clinical activity, field evidence or an outbreak declaration.
 
 ## Static Demo
 
@@ -146,6 +179,8 @@ Useful entry points:
 - [Architecture](docs/architecture.md) — how the module fits together and where it sits inside KYNODE.
 - [Roadmap](ROADMAP.md) — what's built, what's being built, what's planned.
 - [Local Node product note](docs/product/local-node.md) — how the pre-pilot product surface works.
+- [Public synthetic export API](docs/export-schema.md) — fixed public scope, response fields and privacy guarantees.
+- [Synthetic demo walkthrough](docs/demo-walkthrough.md) — reproduce the hosted product flow in five steps.
 - [Optional · Local LLM brief layer with Ollama](docs/integrations/ollama.md) — opt-in edge AI for the surveillance brief, no SaaS dependency.
 - [Demo README](demo/README.md) — how to regenerate and serve the bilingual demo.
 - [Pregrant alpha notes](docs/releases/v0.1.0-pregrant-alpha.md) — what changed, how it was verified, and what remains out of scope.

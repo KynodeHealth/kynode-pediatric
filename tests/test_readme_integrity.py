@@ -13,6 +13,7 @@ reviewer (or any visitor) sees first when they open the GitHub page:
 """
 from __future__ import annotations
 
+import json
 import re
 from pathlib import Path
 
@@ -25,6 +26,36 @@ README = REPO_ROOT / "README.md"
 
 def _readme_text() -> str:
     return README.read_text(encoding="utf-8")
+
+
+def _assert_coverage_table_matches_manifest(
+    body: str,
+    *,
+    local_node_label: str,
+) -> None:
+    manifest = json.loads(
+        (REPO_ROOT / "badges" / "coverage-components.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    components = manifest["components"]
+    rows = {
+        "`growth-curves`": components["growth-curves"]["coverage_percent"],
+        "`triage-ranges`": components["triage-ranges"]["coverage_percent"],
+        "`anomaly-detection`": components["anomaly-detection"]["coverage_percent"],
+        "`vaccinations`": components["vaccinations"]["coverage_percent"],
+        local_node_label: components["local-node"]["coverage_percent"],
+        "`brief.py`": components["brief"]["coverage_percent"],
+    }
+    for label, percent in rows.items():
+        assert f"| {label} | {percent}% |" in body, (
+            f"README coverage table is out of sync for {label}"
+        )
+
+    global_percent = manifest["global"]["coverage_percent"]
+    assert f"| **Global** | **{global_percent}%** |" in body, (
+        "README global coverage is out of sync"
+    )
 
 
 def test_readme_screenshot_links_resolve():
@@ -66,6 +97,8 @@ def test_readme_has_required_badges():
     required_substrings = [
         "actions/workflows/ci.yml/badge.svg",         # CI badge
         "badges/coverage.json",                       # Coverage badge endpoint
+        "badges/coverage-components.json",            # Per-component evidence
+        "tests-184%20passed",                          # Documented test count
         "demo-GitHub%20Pages",                        # Demo badge
         "license-Apache%202.0",                       # License badge
         "python-3.12",                                # Python version badge
@@ -73,6 +106,7 @@ def test_readme_has_required_badges():
     ]
     for needle in required_substrings:
         assert needle in body, f"README missing badge containing '{needle}'"
+    _assert_coverage_table_matches_manifest(body, local_node_label="Local Node package")
 
 
 def test_pytest_ini_includes_all_test_dirs():
@@ -196,6 +230,8 @@ def test_readme_es_has_required_badges():
     required_substrings = [
         "actions/workflows/ci.yml/badge.svg",
         "badges/coverage.json",
+        "badges/coverage-components.json",
+        "tests-184%20passed",
         "demo-GitHub%20Pages",
         "license-Apache%202.0",
         "python-3.12",
@@ -203,3 +239,4 @@ def test_readme_es_has_required_badges():
     ]
     for needle in required_substrings:
         assert needle in es, f"README.es.md missing badge containing '{needle}'"
+    _assert_coverage_table_matches_manifest(es, local_node_label="Paquete Local Node")
