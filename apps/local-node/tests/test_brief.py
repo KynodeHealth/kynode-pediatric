@@ -283,10 +283,17 @@ def test_llm_generator_falls_back_to_deterministic_when_call_raises(monkeypatch)
 
 
 def test_llm_provider_other_than_ollama_is_treated_as_disabled(monkeypatch):
-    """Camino C contract: if someone leaves a legacy "anthropic" / "openai"
-    value in the env, we silently fall back to deterministic instead of
-    attempting any outbound SaaS call. Edge-only intelligence is enforced."""
-    for legacy in ("anthropic", "openai", "huggingface", "claude", ""):
+    """Unsupported provider values fall back to the deterministic generator.
+
+    This prevents a misconfiguration from attempting an outbound SaaS call.
+    """
+    for legacy in (
+        "hosted-provider",
+        "legacy-provider",
+        "misspelled-provider",
+        "unsupported-provider",
+        "",
+    ):
         monkeypatch.setenv("KYNODE_AI_BRIEF_PROVIDER", legacy)
         assert brief_module._llm_enabled() is False
     monkeypatch.setenv("KYNODE_AI_BRIEF_PROVIDER", "ollama")
