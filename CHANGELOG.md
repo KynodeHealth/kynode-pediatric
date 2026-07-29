@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.2.1 — Unreleased
+## v0.2.1 — 2026-07-28
 
 Pre-pilot evidence and export documentation.
 
