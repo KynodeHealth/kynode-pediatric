@@ -148,6 +148,14 @@ const I18N = {
     recordsEyebrow: "Local storage",
     recordsPageTitle: "Records",
     recordsPageSubtitle: "Review local encounters and operational events stored on this device.",
+    routineTitle: "Weekly routine",
+    routineStepWeekly: "Weekly input",
+    routineStepClimate: "Climate context",
+    routineStepExport: "Prepare export",
+    routineStepBrief: "Brief",
+    routineDone: "done",
+    routineCurrent: "current step",
+    routinePending: "pending",
     aggregateTitle: "Export readiness",
     aggregateSubtitle: "Prepare weekly aggregate export after weekly input is saved.",
     aggregateEmptyTitle: "No aggregate signal yet",
@@ -473,6 +481,14 @@ const I18N = {
     recordsEyebrow: "Almacenamiento local",
     recordsPageTitle: "Registros",
     recordsPageSubtitle: "Revisa encuentros locales y eventos operativos guardados en este dispositivo.",
+    routineTitle: "Rutina semanal",
+    routineStepWeekly: "Registro semanal",
+    routineStepClimate: "Contexto climático",
+    routineStepExport: "Preparar exportación",
+    routineStepBrief: "Briefing",
+    routineDone: "listo",
+    routineCurrent: "paso actual",
+    routinePending: "pendiente",
     aggregateTitle: "Preparar exportación",
     aggregateSubtitle: "Prepara la exportación semanal agregada después de guardar el registro semanal.",
     aggregateEmptyTitle: "Aún no hay señal agregada",
@@ -701,6 +717,9 @@ const state = {
   assessment: null,
   aggregateSignal: null,
   lastExport: null,
+  weeklyInput: null,
+  climateContext: null,
+  brief: null,
   auditExpanded: false
 };
 
@@ -835,6 +854,7 @@ function setLanguage(lang) {
     el.textContent = t(el.dataset.i18n);
   });
   renderSaveConfirmations();
+  renderRoutineSteps();
   document.querySelectorAll(".lang").forEach((button) => {
     const active = button.dataset.lang === state.lang;
     button.classList.toggle("active", active);
@@ -1299,7 +1319,40 @@ function renderAssessment(data) {
   setResultCardState("syndrome-card", []);
 }
 
+// The four steps of the weekly routine, in the order they must be done.
+// Each step is done when its state slot is filled; the first step not
+// done is the current one.
+const ROUTINE_STEPS = [
+  { key: "routineStepWeekly", target: "weekly-panel", done: () => Boolean(state.weeklyInput) },
+  { key: "routineStepClimate", target: "climate-panel", done: () => Boolean(state.climateContext) },
+  { key: "routineStepExport", target: "aggregate-panel", done: () => Boolean(state.lastExport) },
+  { key: "routineStepBrief", target: "brief-panel", done: () => Boolean(state.brief) }
+];
+
+function renderRoutineSteps() {
+  const nav = document.getElementById("routine-steps");
+  if (!nav) return;
+  nav.setAttribute("aria-label", t("routineTitle"));
+  const currentIndex = ROUTINE_STEPS.findIndex((step) => !step.done());
+  nav.innerHTML = ROUTINE_STEPS.map((step, index) => {
+    const done = step.done();
+    const current = index === currentIndex;
+    const status = done ? "routineDone" : current ? "routineCurrent" : "routinePending";
+    const cls = `routine-step${done ? " is-done" : ""}${current ? " is-current" : ""}`;
+    const marker = done ? inlineIcon("check-circle", 14) : String(index + 1);
+    return `
+      <a class="${cls}" href="#${step.target}" ${current ? 'aria-current="step"' : ""}>
+        <span class="routine-step-index" aria-hidden="true">${marker}</span>
+        <span class="routine-step-label">${escapeHtml(t(step.key))}</span>
+        <span class="sr-only">${escapeHtml(t(status))}</span>
+      </a>
+    `;
+  }).join("");
+}
+
 function renderWeeklySummary(input) {
+  state.weeklyInput = input || null;
+  renderRoutineSteps();
   const el = document.getElementById("weekly-summary");
   if (!el) return;
   if (!input) {
@@ -1412,6 +1465,7 @@ function renderAggregate(signal) {
 
 function renderPrivacyChecklist(exported) {
   state.lastExport = exported;
+  renderRoutineSteps();
   const el = document.getElementById("privacy-checklist");
   if (!el) return;
   const checks = Object.entries(exported.privacy_checklist || {})
@@ -1503,6 +1557,8 @@ function clearForms() {
   state.assessment = null;
   state.aggregateSignal = null;
   state.lastExport = null;
+  state.climateContext = null;
+  state.brief = null;
   setStatus("waiting");
   renderEmptyAssessment();
   renderWeeklySummary(null);
@@ -1629,6 +1685,8 @@ async function saveWeeklyInput(event) {
       document.getElementById("privacy-checklist").innerHTML = "";
       document.getElementById("export-output").textContent = "{}";
       setExportActionsEnabled(false);
+      state.brief = null;
+      renderRoutineSteps();
       markSaved("weekly-save-status", "savedWeekly");
       showToast(t("savedWeekly"), { timeoutMs: SAVE_TOAST_TIMEOUT_MS });
       await loadAuditEvents();
@@ -1649,10 +1707,11 @@ async function saveClimateContext(event) {
   const button = document.getElementById("save-climate-context");
   try {
     await withButtonLoading(button, null, async () => {
-      await api("/api/climate-context", {
+      state.climateContext = await api("/api/climate-context", {
         method: "PUT",
         body: JSON.stringify(collectClimatePayload())
       });
+      renderRoutineSteps();
       markSaved("climate-save-status", "savedClimate");
       showToast(t("savedClimate"), { timeoutMs: SAVE_TOAST_TIMEOUT_MS });
       await loadAuditEvents();
@@ -1781,6 +1840,8 @@ async function exportJson() {
 }
 
 function renderBrief(brief) {
+  state.brief = brief;
+  renderRoutineSteps();
   const empty = document.getElementById("brief-empty");
   const output = document.getElementById("brief-output");
   if (!output) return;
@@ -1902,6 +1963,8 @@ async function loadSyntheticWalkthrough() {
       state.mode = "synthetic_demo";
       fillFromSynthetic(data);
       state.lastExport = null;
+      state.brief = null;
+      renderRoutineSteps();
       document.getElementById("privacy-checklist").innerHTML = "";
       document.getElementById("export-output").textContent = "{}";
       setExportActionsEnabled(false);
