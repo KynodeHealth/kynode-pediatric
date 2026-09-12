@@ -834,6 +834,7 @@ function setLanguage(lang) {
   document.querySelectorAll("[data-i18n]").forEach((el) => {
     el.textContent = t(el.dataset.i18n);
   });
+  renderSaveConfirmations();
   document.querySelectorAll(".lang").forEach((button) => {
     const active = button.dataset.lang === state.lang;
     button.classList.toggle("active", active);
@@ -1125,7 +1126,34 @@ function setStatus(key, mode = null) {
 }
 
 const TOAST_DEFAULT_TIMEOUT_MS = 3200;
+// Save toasts stay longer than the default: they are the only feedback on
+// forms that do not have a result panel.
+const SAVE_TOAST_TIMEOUT_MS = 5000;
 let _toastDismissTimer = null;
+
+// Persistent "saved at" line under a save button. Unlike the toast it stays
+// on screen until the next save, and it is re-rendered on language change.
+const _saveConfirmations = {};
+
+function markSaved(elementId, key) {
+  _saveConfirmations[elementId] = { key, at: new Date().toISOString() };
+  renderSaveConfirmation(elementId);
+}
+
+function renderSaveConfirmation(elementId) {
+  const node = document.getElementById(elementId);
+  const entry = _saveConfirmations[elementId];
+  if (!node || !entry) return;
+  const icon = (window.KynodeIcons && window.KynodeIcons.icon)
+    ? window.KynodeIcons.icon("check-circle", { size: 14 })
+    : "";
+  node.innerHTML = `${icon}<span>${escapeHtml(`${t(entry.key)} · ${formatTimestamp(entry.at)}`)}</span>`;
+  node.hidden = false;
+}
+
+function renderSaveConfirmations() {
+  Object.keys(_saveConfirmations).forEach(renderSaveConfirmation);
+}
 
 function showToast(message, { variant = "ok", iconName, timeoutMs = TOAST_DEFAULT_TIMEOUT_MS } = {}) {
   const region = document.getElementById("toast-region");
@@ -1569,7 +1597,8 @@ async function saveEncounter() {
           });
       renderAssessment(data.assessment);
       setStatus("saved", "ok");
-      showToast(t("saved"));
+      markSaved("encounter-save-status", "saved");
+      showToast(t("saved"), { timeoutMs: SAVE_TOAST_TIMEOUT_MS });
       await Promise.all([loadEncounters(), loadAuditEvents()]);
     });
   } catch (err) {
@@ -1600,7 +1629,8 @@ async function saveWeeklyInput(event) {
       document.getElementById("privacy-checklist").innerHTML = "";
       document.getElementById("export-output").textContent = "{}";
       setExportActionsEnabled(false);
-      showToast(t("savedWeekly"));
+      markSaved("weekly-save-status", "savedWeekly");
+      showToast(t("savedWeekly"), { timeoutMs: SAVE_TOAST_TIMEOUT_MS });
       await loadAuditEvents();
     });
   } catch (err) {
@@ -1623,7 +1653,8 @@ async function saveClimateContext(event) {
         method: "PUT",
         body: JSON.stringify(collectClimatePayload())
       });
-      showToast(t("savedClimate"));
+      markSaved("climate-save-status", "savedClimate");
+      showToast(t("savedClimate"), { timeoutMs: SAVE_TOAST_TIMEOUT_MS });
       await loadAuditEvents();
     });
   } catch (err) {
