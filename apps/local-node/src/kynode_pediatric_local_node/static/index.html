@@ -416,7 +416,7 @@
                 </label>
                 <label>
                   <span data-i18n="indicator">Indicator</span>
-                  <select name="indicator">
+                  <select name="indicator" aria-describedby="indicator-hint">
                     <option value="dengue_suspicion" data-i18n="dengue">Dengue suspicion</option>
                     <option value="malaria_suspicion" data-i18n="malaria">Malaria suspicion</option>
                     <option value="diarrheal_disease" data-i18n="diarrhea">Diarrheal disease</option>
@@ -424,16 +424,19 @@
                     <option value="respiratory_outbreak" data-i18n="respiratory">Respiratory outbreak</option>
                     <option value="malnutrition_signal" data-i18n="malnutrition">Malnutrition signal</option>
                   </select>
+                  <small id="indicator-hint" class="field-hint" data-i18n="indicatorHint">The syndrome you are counting this week</small>
                 </label>
               </div>
               <div class="field-grid">
                 <label>
                   <span data-i18n="currentCount">Current aggregate count</span>
-                  <input name="current_count" type="number" min="0" step="1" required />
+                  <input name="current_count" type="number" min="0" step="1" required aria-describedby="current-count-hint" />
+                  <small id="current-count-hint" class="field-hint" data-i18n="currentCountHint">Total cases seen this week in the zone, not per child</small>
                 </label>
                 <label>
                   <span data-i18n="baselineCounts">Baseline weekly counts</span>
-                  <input name="historical_counts" required placeholder="18, 24, 21, 28, 19, 26" />
+                  <input name="historical_counts" required placeholder="18, 24, 21, 28, 19, 26" aria-describedby="baseline-counts-hint" />
+                  <small id="baseline-counts-hint" class="field-hint" data-i18n="baselineCountsHint">Weekly totals of the previous weeks, separated by commas, oldest first</small>
                 </label>
               </div>
               <div class="button-row">

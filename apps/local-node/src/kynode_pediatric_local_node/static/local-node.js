@@ -95,7 +95,10 @@ const I18N = {
     respRate: "Resp. rate",
     temperature: "Temp C",
     currentCount: "Current aggregate count",
+    currentCountHint: "Total cases seen this week in the zone, not per child",
+    indicatorHint: "The syndrome you are counting this week",
     baselineCounts: "Baseline weekly counts",
+    baselineCountsHint: "Weekly totals of the previous weeks, separated by commas, oldest first",
     vaccines: "Vaccines received",
     runAssessment: "Run local assessment",
     saveEncounter: "Save local encounter",
@@ -197,7 +200,8 @@ const I18N = {
     completed: "Completed",
     overdue: "Overdue",
     upcoming: "Upcoming",
-    zScore: "Z-score",
+    zScore: "Z-score (growth vs. WHO reference)",
+    signalZScore: "Z-score (deviation from baseline weeks)",
     percentile: "Percentile",
     flag: "Flag",
     count: "Count",
@@ -428,7 +432,10 @@ const I18N = {
     respRate: "Frecuencia resp.",
     temperature: "Temp C",
     currentCount: "Conteo agregado actual",
+    currentCountHint: "Total de casos vistos esta semana en la zona, no por niño",
+    indicatorHint: "El síndrome que estás contando esta semana",
     baselineCounts: "Conteos semanales base",
+    baselineCountsHint: "Totales semanales de las semanas anteriores, separados por coma, la más antigua primero",
     vaccines: "Vacunas recibidas",
     runAssessment: "Evaluar caso local",
     saveEncounter: "Guardar encuentro local",
@@ -530,7 +537,8 @@ const I18N = {
     completed: "Completadas",
     overdue: "Atrasadas",
     upcoming: "Próximas",
-    zScore: "Z-score",
+    zScore: "Puntaje z (crecimiento vs. referencia OMS)",
+    signalZScore: "Puntaje z (desviación frente a las semanas base)",
     percentile: "Percentil",
     flag: "Bandera",
     count: "Conteo",
@@ -1433,7 +1441,7 @@ function renderSparkline(signal) {
         <text x="${currentPoint.x.toFixed(1)}" y="${Math.max(16, currentPoint.y - 10).toFixed(1)}" class="sparkline-label" text-anchor="middle">${escapeHtml(current)}</text>
       </svg>
       <div class="sparkline-meta">
-        <span><strong>${t("zScore")}:</strong> ${escapeHtml(zScore)} · <strong>${t("source")}:</strong> ${escapeHtml(sourceText)}</span>
+        <span><strong>${t("signalZScore")}:</strong> ${escapeHtml(zScore)} · <strong>${t("source")}:</strong> ${escapeHtml(sourceText)}</span>
         <span>${t("baselineWeeks")}: ${escapeHtml(baseline.join(", ") || "-")}</span>
         <span>${t("currentCount")}: ${escapeHtml(current)}</span>
       </div>
