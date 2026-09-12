@@ -1,10 +1,12 @@
 # Roadmap
 
-## Where we are: July 2026
+## Where we are: September 2026
 
 The first four components are available as a pre-pilot alpha in May 2026 ahead of the [UNICEF Climate & Health 2026](https://www.unicef.org/innovation/call-for-application-climate-and-health-2026) application. This is enough to show the product thesis in code and in a demo, but it is not the full pediatric module yet. The fifth component (`imci-rules`) ships after the grant decision.
 
 The v0.2.1 evidence release publishes component-level coverage, the Public synthetic export API contract and a reproducible demo walkthrough without changing clinical logic or claiming field validation.
+
+The v0.2.2 usability release (September 2026) closes the three barriers observed in the August 2026 sessions with three primary-care nurses in Táriba, Táchira — save confirmations, routine sequence guidance and technical terminology — see `docs/qa/usability-sessions-2026-08.md` and `docs/releases/v0.2.2-field-usability-fixes.md`. Clinical logic is unchanged.
 
 ## Components
 
