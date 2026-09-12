@@ -577,6 +577,10 @@ def test_index_loads_design_system_assets_and_product_panels(tmp_path):
         'id="brief-panel"',
         'id="generate-brief"',
         'id="brief-output"',
+        'id="routine-steps"',
+        'id="encounter-save-status"',
+        'id="weekly-save-status"',
+        'id="climate-save-status"',
         'class="mobile-tabbar"',
         'data-view-link="home"',
         'data-view-link="surveillance"',
@@ -584,7 +588,7 @@ def test_index_loads_design_system_assets_and_product_panels(tmp_path):
         'data-view-link="configuration"',
     ):
         assert required in body
-    assert "?v=0.2.0-ui15" in body
+    assert "?v=0.2.2-ux" in body
     assert "PHI exported" not in body
     assert "Prepare weekly aggregate export" in body
     assert "Technical JSON preview" in body
